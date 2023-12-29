@@ -152,7 +152,7 @@ Item.edit_item = (item_id, updatedItemData) => {
                   name,
                   price,
                   img,
-                  discounts: {
+                  discount: {
                     discount_amount,
                     date,
                   },

@@ -1,4 +1,4 @@
-export const APP_DOMAIN = "http://localhost:3000";
+export const APP_DOMAIN = process.env.APP_DOMAIN
 export const GET_ALL_ITEM = "/item/get-all-items";
 export const CREATE_ORDER = "/order/create-order";
 export const GET_PURCHASED_ORDER = "/order/user";

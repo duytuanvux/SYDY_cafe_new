@@ -58,7 +58,7 @@ const Login = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button htmlType="submit">
               Log in
             </Button>
           </Form.Item>

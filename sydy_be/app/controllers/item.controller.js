@@ -22,9 +22,9 @@ exports.get_all_items = async function(req, res) {
             items.map(async (item) => {
                 const avgRating = await getAverageRating(item.id);
                 const is_visible_boolean = Boolean(item.is_visible); // Convert to boolean
-                const discounts = await Item.getDiscountForItem(item.id);
+                const discount = await Item.getDiscountForItem(item.id);
                 
-                return { ...item, avgRating, is_visible: is_visible_boolean, discounts };
+                return { ...item, avgRating, is_visible: is_visible_boolean, discount };
             })
         );
         res.send(itemsWithAvgRating);
