@@ -4,7 +4,8 @@ const connection = mysql.createConnection({
     host: process.env.DB_HOST,
     user: 'root',
     password: process.env.DB_PASSWORD,
-    database: 'sydy_cafe'
+    database: 'sydy_cafe',
+    timezone: '+00:00',
   });
 
 connection.connect((error) => {

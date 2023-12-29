@@ -23,6 +23,7 @@ exports.get_all_items = async function(req, res) {
                 const avgRating = await getAverageRating(item.id);
                 const is_visible_boolean = Boolean(item.is_visible); // Convert to boolean
                 const discounts = await Item.getDiscountForItem(item.id);
+                
                 return { ...item, avgRating, is_visible: is_visible_boolean, discounts };
             })
         );
@@ -44,13 +45,13 @@ exports.add_item = async (req, res) => {
 }
 exports.edit_item = async (req, res) => {
     try {
-        const itemId = req.params.itemId; // Assuming you have the item ID in the request parameters
+        const itemId = req.params.itemId; 
         const updatedItemData = req.body;
         
         const result = await Item.edit_item(itemId, updatedItemData);
         
         if (result.success) {
-            res.json(result.item); // Return the updated item if the edit was successful
+            res.json(result.item); 
         } else {
             res.status(404).json({ error: 'Item not found' });
         }

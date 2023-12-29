@@ -39,7 +39,7 @@ const DropdownComponent = () => {
 
   return (
     <Dropdown overlay={menu}>
-      <Button style={{color: 'FFF5DC'}}>
+      <Button style={{color: 'white'}}>
         {`Welcome, ${userInfo.fullname}`}
       </Button>
     </Dropdown>

@@ -82,7 +82,7 @@ const Management = () => {
   };
 
   const handleFinish = (item) => {
-    console.log(item)
+    console.log(item);
     const actionType = item.id ? "edit" : "add";
     handleItemAction(actionType, item.id, item);
     setModalState({ isOpen: false, data: null });
@@ -134,7 +134,7 @@ const Management = () => {
       ),
     },
   ];
- 
+
   return (
     <div className="flex flex-col items-center">
       <div className="text-center uppercase m-5 text-4xl">Quản lý sản phẩm</div>
@@ -170,9 +170,10 @@ const Management = () => {
             category_id: modalState.data?.category_id,
             discounts: {
               discount_amount: modalState.data?.discounts?.discount_amount,
-              date: modalState.data?.discounts?.date.map((date) => dayjs(date, "YYYY-MM-DD"))
+              date: modalState.data?.discounts?.date.map((date) =>
+              dayjs(date, "DD-MM-YYYY")
+              ),
             },
-            
           }}
         >
           <Form.Item name="id" label="ID">
@@ -225,16 +226,14 @@ const Management = () => {
             label="Discount(%)"
             rules={[{ required: false, message: "Please enter a discount" }]}
           >
-            <Input  />
+            <Input />
           </Form.Item>
           <Form.Item
             name={["discounts", "date"]}
             label="Discount Date Range"
             rules={[{ required: false, message: "Please select a date range" }]}
           >
-            <DatePicker.RangePicker 
-            format="YYYY-MM-DD"
-            />
+            <DatePicker.RangePicker format="DD-MM-YYYY" />
           </Form.Item>
           <Form.Item name="is_visible" label="Display" valuePropName="checked">
             <Switch checked />
