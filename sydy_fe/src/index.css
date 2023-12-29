@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .item {
+    @apply bg-white text-base-grey
+        w-72 min-h-[10rem]
+        flex flex-col gap-4 items-center justify-center
+        shadow-lg rounded-sm 
+        hover:shadow-2xl;
+  }
+
+  .item-img {
+    @apply max-w-[200px]
+    flex items-center;
+  }
+
+  .list-items {
+    @apply flex flex-wrap gap-1 items-center justify-center;
+  }
+
+  .button {
+    @apply bg-transparent hover:bg-base-grey
+        text-base-grey font-semibold hover:text-white 
+        py-2 px-4 border border-base-grey hover:border-transparent rounded;
+  }
+
+}
