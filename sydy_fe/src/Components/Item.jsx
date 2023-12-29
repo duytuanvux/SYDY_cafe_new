@@ -13,7 +13,7 @@ function Item({ item }) {
 
   return (
     <>
-      <Badge.Ribbon style={item.is_visible ? { display: 'none' } : {display: "block"}} color="red" text="Sale">
+      <Badge.Ribbon style={ item.discounts?.discount_amount ? { display: 'block' } : {display: "none"}} color="red" text="Sale">
         <Card
           style={{ width: 200, height: "auto" }}
           cover={

@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Card, Rate } from 'antd';
+import { List, Card, Rate, message } from 'antd';
 import UserServices from "../Services/UserServices";
 
 const PurchasedItems = ({ order, reFetch }) => {
@@ -19,10 +19,10 @@ const PurchasedItems = ({ order, reFetch }) => {
       await userServices.submitFeedback(feedbackData);
       reFetch()
       // If the feedback submission is successful, you may want to update the local state or take other actions
-      console.log('Feedback submitted successfully!');
+      message.success('Feedback submitted successfully!');
     } catch (error) {
       // Handle errors
-      console.error('Error submitting feedback:', error);
+      message.error('Error submitting feedback:', error);
     }
   };
 

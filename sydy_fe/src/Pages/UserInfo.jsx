@@ -79,7 +79,7 @@ const UserInfo = ({ userId }) => {
       </Form.Item>
 
       <Form.Item wrapperCol={{ offset: 6, span: 12 }}>
-        <Button type="primary" htmlType="submit">
+        <Button htmlType="submit">
           Update
         </Button>
       </Form.Item>
