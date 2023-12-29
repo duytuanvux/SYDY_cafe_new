@@ -168,7 +168,7 @@ const Management = () => {
             description: modalState.data?.description,
             is_visible: modalState.data?.is_visible,
             category_id: modalState.data?.category_id,
-            discounts: {
+            discount: {
               discount_amount: modalState.data?.discounts?.discount_amount,
               date: modalState.data?.discounts?.date.map((date) =>
               dayjs(date, "DD-MM-YYYY")
@@ -222,14 +222,14 @@ const Management = () => {
             <Input.TextArea />
           </Form.Item>
           <Form.Item
-            name={["discounts", "discount_amount"]}
+            name={["discount", "discount_amount"]}
             label="Discount(%)"
             rules={[{ required: false, message: "Please enter a discount" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name={["discounts", "date"]}
+            name={["discount", "date"]}
             label="Discount Date Range"
             rules={[{ required: false, message: "Please select a date range" }]}
           >
