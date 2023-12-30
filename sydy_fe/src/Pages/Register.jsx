@@ -26,7 +26,7 @@ const Register = () => {
       <div className="flex flex-col w-1/4 justify-center mx-14">
         <div className="flex justify-center">
           <Link to="/">
-            <img className="w-52" src="/assets/img/primary-logo.png" alt="" />
+            <img className="w-52" src="/assets/img/logo-2nd.png" alt="" />
           </Link>
         </div>
         <div className="flex flex-col gap-2">
@@ -110,7 +110,7 @@ const Register = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button htmlType="submit">
               Sign up
             </Button>
           </Form.Item>
@@ -120,7 +120,7 @@ const Register = () => {
       <div className="w-3/4 flex">
         <img
           className=" object-cover h-screen w-screen"
-          src="/assets/img/IMG_9934.JPG"
+          src="/assets/img/welcome2.JPG"
           alt=""
         />
       </div>

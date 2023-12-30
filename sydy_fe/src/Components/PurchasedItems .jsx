@@ -1,28 +1,34 @@
-import React from 'react';
-import { List, Card, Rate, message } from 'antd';
+import React from "react";
+import { List, Card, Rate, message } from "antd";
 import UserServices from "../Services/UserServices";
 
 const PurchasedItems = ({ order, reFetch }) => {
   const userServices = new UserServices();
   function isNull(value) {
     return value === null;
-}
+  }
   const handleRatingChange = async (itemId, rating) => {
     try {
+      // Check if the order status is 4 (assuming 4 is the status code for a completed order)
+      if (order.status.code !== 4) {
+        // If the order status is not 4, do not allow rating
+        message.warning("You can only rate items for completed orders.");
+        return;
+      }
       const feedbackData = {
         order_id: order.order_id, // Fix: use order.order_id instead of order_id
         user_id: order.user_id,
-        item_id : itemId,
+        item_id: itemId,
         rating,
       };
       // Call the async submitFeedback method from UserServices
       await userServices.submitFeedback(feedbackData);
-      reFetch()
+      reFetch();
       // If the feedback submission is successful, you may want to update the local state or take other actions
-      message.success('Feedback submitted successfully!');
+      message.success("Feedback submitted successfully!");
     } catch (error) {
       // Handle errors
-      message.error('Error submitting feedback:', error);
+      message.error("Error submitting feedback:", error);
     }
   };
 
@@ -30,8 +36,17 @@ const PurchasedItems = ({ order, reFetch }) => {
     <div className="p-4">
       <Card title={`Order ID: #${order.order_id}`} className="w-full">
         <p>
-          <strong>Order Date:</strong> {new Date(order.order_date).toLocaleDateString()}
+          <strong>Order Date:</strong>{" "}
+          {new Date(order.order_date).toLocaleDateString()}
         </p>
+        <p>
+          <strong>Status:</strong> {order.status.name}
+        </p>
+        {order.shipper && (
+          <p>
+            <strong>Shipper:</strong> {order.shipper.name}
+          </p>
+        )}
         <p>
           <strong>Total:</strong> ${order.total}
         </p>
@@ -57,13 +72,16 @@ const PurchasedItems = ({ order, reFetch }) => {
               <p>
                 <strong>Note:</strong> {item.note}
               </p>
-              <p>
-                <strong>Rating:</strong> <Rate
-                  value={item.rating}
-                  disabled={!isNull(item.rating)}
-                  onChange={(rating) => handleRatingChange(item.id, rating)}
-                />
-              </p>
+              {order.status.code === 4 && ( // Conditionally render based on the order status
+                <p>
+                  <strong>Rating:</strong>{" "}
+                  <Rate
+                    value={item.rating}
+                    disabled={!isNull(item.rating)}
+                    onChange={(rating) => handleRatingChange(item.id, rating)}
+                  />
+                </p>
+              )}
             </List.Item>
           )}
         />

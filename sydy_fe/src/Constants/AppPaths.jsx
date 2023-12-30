@@ -1,4 +1,4 @@
-export const APP_DOMAIN = process.env.APP_DOMAIN
+export const APP_DOMAIN = import.meta.env.VITE_DOMAIN
 export const GET_ALL_ITEM = "/item/get-all-items";
 export const CREATE_ORDER = "/order/create-order";
 export const GET_PURCHASED_ORDER = "/order/user";
@@ -12,3 +12,4 @@ export const DELETE_ITEM = "/item/delete-item";
 export const EDIT_ITEM = "/item/edit-item";
 export const ADD_ITEM = "/item/add-item";
 export const GET_CATEGORY = "/common/get-category";
+

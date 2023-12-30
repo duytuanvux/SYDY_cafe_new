@@ -2,7 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import Profile from "./Profile";
 import { useSelector } from "react-redux";
 function Header() {
-  const userInfo = useSelector((state) => state.user.userInfo);
+  const userInfo = useSelector((state) => state.auth.user);
   return (
     <header className="bg-base-grey sticky top-0 z-50">
       <nav className="flex flex-row items-center gap-0">

@@ -12,4 +12,5 @@ function getCategory() {
       });
     });
   }
+
 module.exports = {getCategory};

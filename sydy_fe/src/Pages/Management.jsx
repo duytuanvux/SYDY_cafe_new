@@ -10,6 +10,7 @@ import {
   message,
   Select,
   DatePicker,
+  Tabs,
 } from "antd";
 
 import { useEffect, useState } from "react";
@@ -17,9 +18,9 @@ import ItemServices from "../Services/ItemServices";
 import { CommonServices } from "../Services/CommonServices";
 import dayjs from "dayjs";
 
-
-
 const Management = () => {
+  const [activeTab, setActiveTab] = useState("item");
+
   const [modalState, setModalState] = useState({ isOpen: false, data: null });
   const [dataSource, setDataSource] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -97,6 +98,11 @@ const Management = () => {
     setDataSource(filterData);
   };
 
+  const renderCategory = (categoryId) => {
+    const category = categories.find((cat) => cat.id === categoryId);
+    return category ? category.name : "N/A";
+  };
+
   const columns = [
     {
       title: "ID",
@@ -109,6 +115,13 @@ const Management = () => {
       dataIndex: "name",
       key: "name",
       align: "center",
+    },
+    {
+      title: "Danh mục",
+      dataIndex: "category_id",
+      key: "category_id",
+      align: "center",
+      render: (category_id) => renderCategory(category_id),
     },
     {
       title: "Hình ảnh",
@@ -124,6 +137,13 @@ const Management = () => {
       align: "center",
     },
     {
+      title: "Visibility",
+      dataIndex: "is_visible",
+      key: "is_visible",
+      align: "center",
+      render: (isVisible) => (isVisible ? "Yes" : "No"),
+    },
+    {
       title: "Hành động",
       key: "action",
       align: "center",
@@ -134,13 +154,13 @@ const Management = () => {
       ),
     },
   ];
-
-  return (
-    <div className="flex flex-col items-center">
-      <div className="text-center uppercase m-5 text-4xl">Quản lý sản phẩm</div>
-      <div className="flex justify-center w-1/2 p-5 gap-5">
-        <Button onClick={() => showModal()}>Thêm sản phẩm</Button>
-        <Input placeholder="Tìm kiếm" onChange={handleSearch} />
+  const itemTab = (
+    <>
+      <div className="flex items-center justify-center">
+        <div className="flex w-1/2 p-5 gap-5">
+          <Button onClick={() => showModal()}>Thêm sản phẩm</Button>
+          <Input placeholder="Tìm kiếm" onChange={handleSearch} />
+        </div>
       </div>
       <Table
         columns={columns}
@@ -169,9 +189,9 @@ const Management = () => {
             is_visible: modalState.data?.is_visible,
             category_id: modalState.data?.category_id,
             discount: {
-              discount_amount: modalState.data?.discounts?.discount_amount,
-              date: modalState.data?.discounts?.date.map((date) =>
-              dayjs(date, "DD-MM-YYYY")
+              discount_amount: modalState.data?.discount?.discount_amount,
+              date: modalState.data?.discount?.date.map((date) =>
+                dayjs(date, "DD-MM-YYYY")
               ),
             },
           }}
@@ -244,7 +264,40 @@ const Management = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </>
+  );
+  const tab = [
+    {
+      key: "order",
+      label: "Quản lý đơn hàng",
+      children: null,
+    },
+    {
+      key: "item",
+      label: "Quản lý sản phẩm",
+      children: itemTab,
+    },
+    {
+      key: "user",
+      label: "Quản lý người dùng",
+      children: null,
+    },
+    {
+      key: "shipper",
+      label: "Quản lý người giao hàng",
+      children: null,
+    },
+  ];
+
+  return (
+    <>
+      <div className="text-center uppercase m-5 text-4xl">Quản lý</div>
+      <Tabs
+        className="flex items-center"
+        items={tab}
+        onChange={(key) => setActiveTab(key)}
+      ></Tabs>
+    </>
   );
 };
 

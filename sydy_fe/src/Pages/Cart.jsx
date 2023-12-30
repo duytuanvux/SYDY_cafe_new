@@ -1,32 +1,45 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Form, Input, Button, message, Result, Card, Row, Col, Image } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  message,
+  Result,
+  Card,
+  Row,
+  Col,
+  Image,
+} from "antd";
 
 import OrderServices from "../Services/OrderService";
-import UserServices from "../Services/UserServices"; 
-import { selectUserInfo } from "../Redux/Reducers/UserReducer";
+import UserServices from "../Services/UserServices";
+
 import { clearCart } from "../Redux/Reducers/CartReducer";
 
 const Cart = () => {
   const cart = useSelector((state) => state.cart).cart;
-  const userInfo = useSelector(selectUserInfo);
+  const userInfo = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const [form] = Form.useForm();
 
-  const total = cart.reduce((sum, item) => sum + (item?.price || 0) * (item?.quantity || 0), 0);
-
+  const total = cart.reduce(
+    (sum, item) => sum + (item?.price || 0) * (item?.quantity || 0),
+    0
+  );
 
   const orderServices = new OrderServices();
   const userServiceInstance = new UserServices(); // Create an instance of UserServices
 
-  
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userData = await userServiceInstance.getUserInfo(userInfo.user_id);
+        const userData = await userServiceInstance.getUserInfo(
+          userInfo.user_id
+        );
         form.setFieldsValue(userData.data[0]);
       } catch (error) {
-        message.error('Error fetching user data:', error);
+        message.error("Error fetching user data:", error);
       }
     };
 
@@ -65,19 +78,19 @@ const Cart = () => {
     <div>
       {cart.map((item) => (
         <Card title={item.name} style={{ width: 300 }}>
-        <Row gutter={[16, 16]}>
-          <Col span={24}>
-            <Image src={item.img} alt={item.name} preview={false} />
-          </Col>
-          <Col span={24}>
-            <p>Price: ${item.price}</p>
-            <p>Quantity: {item.quantity}</p>
-            <p>Sugar: {item.sugar}</p>
-            <p>Ice: {item.ice}</p>
-            <p>Average Rating: {item.avgRating}</p>
-          </Col>
-        </Row>
-      </Card>
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
+              <Image src={item.img} alt={item.name} preview={false} />
+            </Col>
+            <Col span={24}>
+              <p>Price: ${item.price}</p>
+              <p>Quantity: {item.quantity}</p>
+              <p>Sugar: {item.sugar}</p>
+              <p>Ice: {item.ice}</p>
+              <p>Average Rating: {item.avgRating}</p>
+            </Col>
+          </Row>
+        </Card>
       ))}
       <div>Total: {total}</div>
       <Form form={form} onFinish={handleSubmit}>
@@ -91,7 +104,9 @@ const Cart = () => {
         <Form.Item
           label="Phone"
           name="phone"
-          rules={[{ required: true, message: "Please enter your phone number" }]}
+          rules={[
+            { required: true, message: "Please enter your phone number" },
+          ]}
         >
           <Input />
         </Form.Item>
@@ -103,9 +118,7 @@ const Cart = () => {
           <Input.TextArea />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Submit Order
-          </Button>
+          <Button htmlType="submit">Submit Order</Button>
         </Form.Item>
       </Form>
     </div>
