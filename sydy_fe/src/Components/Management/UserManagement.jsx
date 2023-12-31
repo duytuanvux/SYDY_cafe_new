@@ -1,4 +1,4 @@
-import UserServices from "../Services/UserServices";
+import UserServices from "../../Services/UserServices";
 import { useState,useEffect } from "react";
 import { Table } from "antd";
 const UserManagement = () => {

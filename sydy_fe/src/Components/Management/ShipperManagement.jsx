@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table } from "antd";
-import CommonServices from "../Services/CommonServices";
+import CommonServices from "../../Services/CommonServices";
 
 const ShipperManagement = () => {
   const CommonServicesInstance = new CommonServices();

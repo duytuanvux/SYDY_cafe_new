@@ -13,8 +13,8 @@ import {
 } from "antd";
 
 import { useEffect, useState } from "react";
-import ItemServices from "../Services/ItemServices";
-import { CommonServices } from "../Services/CommonServices";
+import ItemServices from "../../Services/ItemServices";
+import CommonServices from "../../Services/CommonServices";
 import dayjs from "dayjs";
 
 const ItemManagement = () => {
