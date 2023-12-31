@@ -46,6 +46,17 @@ exports.getOrderByUserId = async (req, res) => {
   }
 };
 
+exports.getAllOrder = async (req, res) => {
+  try {
+
+    const data = await Order.getAllOrders();
+    res.json({ data });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 exports.updateOrderStatus = async (req, res) => {
   const orderId = req.params.orderId;
   const newStatusCode = req.body.status_code;

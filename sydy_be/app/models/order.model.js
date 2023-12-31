@@ -13,18 +13,6 @@ function create(orderData) {
   });
 }
 
-function updateStatus(order_id, newStatusCode) {
-  return new Promise((resolve, reject) => {
-    const sql = "UPDATE `order` SET status_code = ? WHERE order_id = ? ";
-    db.query(sql, [newStatusCode, order_id], (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
 function getAllOrdersByUserId(user_id) {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -86,4 +74,28 @@ function groupItems(orders) {
   return Object.values(groupedOrders);
 }
 
-module.exports = { create, updateStatus, getAllOrdersByUserId };
+function getAllOrders() {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM `order`";
+    db.query(sql, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+function updateStatus(order_id, newStatusCode) {
+  return new Promise((resolve, reject) => {
+    const sql = "UPDATE `order` SET status_code = ? WHERE order_id = ? ";
+    db.query(sql, [newStatusCode, order_id], (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+module.exports = { create, getAllOrders, updateStatus, getAllOrdersByUserId };

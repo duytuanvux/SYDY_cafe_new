@@ -98,4 +98,12 @@ exports.updateUserInfo = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
-  
+
+exports.getAllUser = async (req,res) => {
+  try {
+      const data = await User.getAllUser()
+      res.json(data)
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+}

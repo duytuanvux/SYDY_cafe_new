@@ -9,5 +9,15 @@ exports.getCategory = async function(req, res) {
       res.status(500).send('Internal Server Error');
     }
   };
+  
+exports.getShipper = async function(req, res) {
+  try {
+    const data = await CommonModel.getShipper();
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 

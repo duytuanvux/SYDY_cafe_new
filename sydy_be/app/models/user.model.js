@@ -80,4 +80,16 @@ function updateUserInfo(user_id, data) {
     });
   }
 
-module.exports = {checkUsernameExists, checkEmailExists,getUserByUsername, getUserInfo, updateUserInfo, register}
+function getAllUser() {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT u.user_id, u.username, u.fullname, u.email, u.phone, u.address FROM user u ';
+      db.query(sql, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
+module.exports = {checkUsernameExists, checkEmailExists,getUserByUsername, getUserInfo, getAllUser, updateUserInfo, register}
