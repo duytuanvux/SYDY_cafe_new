@@ -15,4 +15,6 @@ export const GET_CATEGORY = "/common/get-category";
 export const GET_ALL_ORDERS = "/order/get-all-orders";
 export const GET_SHIPPER = "/common/get-shipper";
 export const GET_ALL_USERS = "/user/get-all-users";
+export const GET_STATUS = "/common/get-status";
+export const UPDATE_STATUS_ORDER = "/order/update-status";
 

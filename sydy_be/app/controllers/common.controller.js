@@ -20,4 +20,14 @@ exports.getShipper = async function(req, res) {
   }
 };
 
+exports.getStatus = async function(req, res) {
+  try {
+    const data = await CommonModel.getStatus();
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 
