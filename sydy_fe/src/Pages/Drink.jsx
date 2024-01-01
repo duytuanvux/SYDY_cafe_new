@@ -9,8 +9,8 @@ function Drinks() {
   const [drinksList, setDrinksList] = useState(null);
   const [categoryList, setCategoryList] = useState([]);
   const [filteredDrinks, setFilteredDrinks] = useState(null);
-  const [categoryFilter, setCategoryFilter] = useState(null);
-  const [sortBy, setSortBy] = useState(null); // 'price' or 'avgRating'
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [sortBy, setSortBy] = useState(""); // 'price' or 'avgRating'
   const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -76,69 +76,79 @@ function Drinks() {
 
   return (
     <div>
-      {/* Add filter, sorter, and search bar UI elements */}
-      <Row gutter={16} style={{ marginBottom: 16 }}>
-        <Col span={6}>
-          <Select
-            placeholder="Select Category"
-            style={{ width: "100%" }}
-            onChange={(value) => setCategoryFilter(value)}
-          >
-            <Option value="">All Categories</Option>
-            {categoryList.map((category) => (
-              <Option key={category.id} value={category.id}>
-                {category.name}
-              </Option>
-            ))}
-          </Select>
-        </Col>
-        <Col span={6}>
-          <Select
-            placeholder="Sort By"
-            style={{ width: "100%" }}
-            onChange={(value) => setSortBy(value)}
-          >
-            <Option value="">No Sorting</Option>
-            <Option value="price">Price</Option>
-            <Option value="avgRating">Average Rating</Option>
-          </Select>
-        </Col>
-        <Col span={6}>
-          <Select
-            placeholder="Sort Order"
-            style={{ width: "100%" }}
-            onChange={(value) => setSortOrder(value)}
-          >
-            <Option value="asc">Ascending</Option>
-            <Option value="desc">Descending</Option>
-          </Select>
-        </Col>
-        <Col span={6}>
+      <Row gutter={16}>
+        {/* Sidebar with filters and sorter */}
+        <Col span={8}>
+          <div
+            style={{
+              padding: "16px",
+              borderRight: "1px solid #e8e8e8",
+              position: "sticky",
+              top: "0", // Adjust top value as needed
+              height: "100vh", // Adjust height as needed
+              overflowY: "auto",
+            }}
+          > 
           <Input
-            placeholder="Search..."
-            style={{ width: "100%" }}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+              placeholder="Search..."
+              style={{ width: "100%", marginBottom: "16px" }}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              value={searchTerm}
+            />
+            <h3>Filters</h3>
+            <Select
+              placeholder="Select Category"
+              style={{ width: "100%", marginBottom: "16px" }}
+              onChange={(value) => setCategoryFilter(value)}
+              value={categoryFilter}
+            >
+              <Option value="">All Categories</Option>
+              {categoryList.map((category) => (
+                <Option key={category.id} value={category.id}>
+                  {category.name}
+                </Option>
+              ))}
+            </Select>
+
+            <Select
+              placeholder="Sort By"
+              style={{ width: "100%", marginBottom: "16px" }}
+              onChange={(value) => setSortBy(value)}
+              value={sortBy}
+            >
+              <Option value="">No Sorting</Option>
+              <Option value="price">Price</Option>
+              <Option value="avgRating">Average Rating</Option>
+            </Select>
+
+            <Select
+              placeholder="Sort Order"
+              style={{ width: "100%", marginBottom: "16px" }}
+              onChange={(value) => setSortOrder(value)}
+              value={sortOrder}
+            >
+              <Option value="asc">Ascending</Option>
+              <Option value="desc">Descending</Option>
+            </Select>
+
+            
+            <Button onClick={handleResetFilters}>Reset Filters</Button>
+          </div>
+        </Col>
+
+        {/* Content area with items list and search bar */}
+        <Col span={16}>
+          <div className="flex flex-wrap gap-2">
+            {loading ? (
+              <Spin size="large" fullscreen />
+            ) : (
+              filteredDrinks.map((item) =>
+                item.is_visible ? <Item item={item} key={item.id} /> : null
+              )
+            )}
+          </div>
         </Col>
       </Row>
-
-      {/* Reset Filters Button */}
-      <Row gutter={16} style={{ marginBottom: 16 }}>
-        <Col span={24}>
-          <Button onClick={handleResetFilters}>Reset Filters</Button>
-        </Col>
-      </Row>
-
-      {/* Render the filtered and sorted drinks */}
-      <div className="flex flex-wrap gap-2 items-center justify-center">
-        {loading ? (
-          <Spin size="large" fullscreen />
-        ) :  (
-          filteredDrinks.map((item) =>
-            item.is_visible ? <Item item={item} key={item.id} /> : null
-          )
-        ) }
-      </div>
     </div>
   );
 }
