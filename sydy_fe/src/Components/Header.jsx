@@ -13,25 +13,25 @@ function Header() {
         </div>
         <ul className="flex flex-row basis-6/12 items-center justify-center gap-8 uppercase text-base-cream">
           <NavLink to={""}>Trang chủ</NavLink>
-          <NavLink hidden to={"foods"}>Đồ ăn</NavLink>
+          <NavLink hidden to={"foods"}>
+            Đồ ăn
+          </NavLink>
           <NavLink to={"drinks"}>Thức uống</NavLink>
-          <NavLink to={"news"}>Tin tức</NavLink>
+          <NavLink to={"about"}>Giới thiệu</NavLink>
         </ul>
-        {userInfo ? <Profile /> : <div>
-        <Link to="/login">
-          <button>
-            Login
-          </button>
-        </Link>
-        <Link to="/register">
-          <button>
-            Register
-          </button>
-        </Link>
-      </div>}
+        {userInfo ? (
+          <Profile />
+        ) : (
+          <div className="flex flex-row basis-3/12 items-center justify-center gap-1 uppercase text-base-cream">
+            <NavLink to={"login"}>Đăng nhập</NavLink>
+<p>/</p>
+            <NavLink to={"register"}>Đăng ký</NavLink>
+          
+          </div>
+        )}
       </nav>
     </header>
-  )
+  );
 }
 
 export default Header;

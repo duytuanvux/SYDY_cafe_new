@@ -17,6 +17,7 @@ import Management from "./Pages/Management.jsx";
 import Order from "./Pages/Order.jsx";
 import PrivateRoute from "./Components/PrivateRoute.jsx";
 import Unauthorized from "./Pages/Unauthorized.jsx";
+import About from "./Pages/About.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
@@ -28,7 +29,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="/" element={<HomePage />} />
             <Route path="drinks" element={<Drinks />} />
             <Route path="cart" element={<Cart />}></Route>
-
+            <Route path="about" element={<About/>} ></Route>
             <Route path="404" element={<NotFound />} />
             <Route path="unauthorized" element={<Unauthorized/>} />
             <Route path="*" element={<Navigate replace to="404" />} />
