@@ -9,7 +9,7 @@ const Management = () => {
     {
       key: "order",
       label: "Quản lý đơn hàng",
-      icon: <Badge count={0} color="red" />,
+      icon: <Badge count={1} color="red" />,
       children: <OrderManagement />,
     },
     {

@@ -28,18 +28,39 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route path="" element={<App />}>
             <Route path="/" element={<HomePage />} />
             <Route path="drinks" element={<Drinks />} />
-            <Route path="cart" element={<Cart />}></Route>
-            <Route path="about" element={<About/>} ></Route>
+            <Route path="cart" element={<PrivateRoute><Cart /></PrivateRoute>}></Route>
+            <Route path="about" element={<About />}></Route>
             <Route path="404" element={<NotFound />} />
-            <Route path="unauthorized" element={<Unauthorized/>} />
+            <Route path="unauthorized" element={<Unauthorized />} />
             <Route path="*" element={<Navigate replace to="404" />} />
+            <Route
+              path="userInfo"
+              element={
+                <PrivateRoute>
+                  <UserInfo />
+                </PrivateRoute>
+              }
+            ></Route>
+            <Route
+              path="order"
+              element={
+                <PrivateRoute>
+                  <Order />
+                </PrivateRoute>
+              }
+            ></Route>
           </Route>
 
-          <Route path="userInfo" element={<UserInfo />}></Route>
-          <Route path="order" element={<Order />}></Route>
           <Route path="login" element={<Login />}></Route>
           <Route path="register" element={<Register />}></Route>
-          <Route path="management" element={<PrivateRoute><Management/></PrivateRoute>} />
+          <Route
+            path="management"
+            element={
+              <PrivateRoute adminOnly={true}>
+                <Management />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </PersistGate>

@@ -1,26 +1,35 @@
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button, message, Spin } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import UserServices from "../Services/UserServices";
-
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 const Register = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const [loading, setLoading] = useState(false); // Added loading state
 
   const onFinish = async (data) => {
-    
     try {
-     const UserServiceInstance = new UserServices();
-        const res = await UserServiceInstance.register(data)
+      setLoading(true); // Set loading to true when starting the API call
+      const UserServiceInstance = new UserServices();
+      const res = await UserServiceInstance.register(data);
       message.success(res.message || res.error);
       navigate("/login");
     } catch (error) {
       // Handle registration error, show a message, etc.
       message.error(error.response.data.error);
+    } finally {
+      setLoading(false); // Set loading to false when API call is complete
     }
   };
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Redirect to the home page or any other page you prefer
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
   return (
     <div className="bg-base-cream flex">
       <div className="flex flex-col w-1/4 justify-center mx-14">
@@ -74,7 +83,9 @@ const Register = () => {
           <Form.Item
             name="fullname"
             label="Full Name"
-            rules={[{ required: true, message: "Please input your full name!" }]}
+            rules={[
+              { required: true, message: "Please input your full name!" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -110,8 +121,8 @@ const Register = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button htmlType="submit">
-              Sign up
+            <Button htmlType="submit" >
+              Register
             </Button>
           </Form.Item>
         </Form>
@@ -124,6 +135,11 @@ const Register = () => {
           alt=""
         />
       </div>
+      {loading && (
+        <div className="loading-spinner">
+          <Spin fullscreen />
+        </div>
+      )}
     </div>
   );
 };

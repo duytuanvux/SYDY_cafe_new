@@ -55,7 +55,6 @@ function groupItems(orders) {
           name: order.shipper_name,
         },
         total: parseFloat(order.total),
-        shipper_id: order.shipper_id,
         user_id: order.user_id,
         phone: order.phone,
         address: order.address,
@@ -65,6 +64,7 @@ function groupItems(orders) {
 
     groupedOrders[key].items.push({
       id: order.item_id,
+      name : order.name,
       quantity: order.quantity,
       note: order.note,
       rating: order.rating,
@@ -76,12 +76,22 @@ function groupItems(orders) {
 
 function getAllOrders() {
   return new Promise((resolve, reject) => {
-    const sql = "SELECT * FROM `order`";
+    const sql = `
+      SELECT o.*, os.status_name, oi.item_id, i.id AS item_id, i.name, oi.quantity, oi.note, f.rating, 
+      s.fullname AS shipper_name
+      FROM \`order\` o
+      LEFT JOIN order_status os ON o.status_code = os.status_code
+      LEFT JOIN order_item oi ON o.order_id = oi.order_id
+      LEFT JOIN item i ON oi.item_id = i.id
+      LEFT JOIN feedback f ON o.order_id = f.order_id AND oi.item_id = f.item_id
+      LEFT JOIN shipper s ON o.shipper_id = s.shipper_id
+      `;
     db.query(sql, (err, data) => {
       if (err) {
         reject(err);
       } else {
-        resolve(data);
+        const groupedOrders = groupItems(data);
+        resolve(groupedOrders);
       }
     });
   });

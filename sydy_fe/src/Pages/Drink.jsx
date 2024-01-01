@@ -95,7 +95,7 @@ function Drinks() {
               onChange={(e) => setSearchTerm(e.target.value)}
               value={searchTerm}
             />
-            <h3>Filters</h3>
+            <h3 className="text-lg">Filters</h3>
             <Select
               placeholder="Select Category"
               style={{ width: "100%", marginBottom: "16px" }}

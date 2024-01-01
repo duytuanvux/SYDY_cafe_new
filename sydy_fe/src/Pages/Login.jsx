@@ -1,18 +1,24 @@
 import { Link } from "react-router-dom";
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button, message, Spin } from "antd";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import UserServices from "../Services/UserServices";
 import { loginSuccess } from "../Redux/Reducers/AuthReducer";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
   const onFinish = async (data) => {
     try {
+      setLoading(true); // Set loading to true when submitting the form
       const UserServiceInstance = new UserServices();
       const res = await UserServiceInstance.login(data);
-      dispatch(loginSuccess(res.data))
+      dispatch(loginSuccess(res.data));
       if (res.data.is_admin) {
         navigate('/management');
       } else {
@@ -21,9 +27,17 @@ const Login = () => {
       message.success(res.message || res.error);
     } catch (error) {
       message.error(error.response.data.error);
+    } finally {
+      setLoading(false); // Set loading to false when the login process is complete
     }
   };
-
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Redirect to the home page or any other page you prefer
+      navigate('/');
+    }
+  }, [isAuthenticated]);
+  
   return (
     <div className="bg-base-cream flex">
       <div className="w-3/4">
@@ -76,6 +90,11 @@ const Login = () => {
             <Button htmlType="submit">Log in</Button>
           </Form.Item>
         </Form>
+        {loading && (
+        <div className="loading-spinner">
+          <Spin fullscreen />
+        </div>
+      )}
       </div>
     </div>
   );

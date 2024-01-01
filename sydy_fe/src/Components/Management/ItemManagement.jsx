@@ -18,7 +18,6 @@ import CommonServices from "../../Services/CommonServices";
 import dayjs from "dayjs";
 
 const ItemManagement = () => {
-
   const [modalState, setModalState] = useState({ isOpen: false, data: null });
   const [dataSource, setDataSource] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -89,11 +88,16 @@ const ItemManagement = () => {
 
   const handleSearch = (e) => {
     const currentVal = e.target.value.toLowerCase().trim();
-    const filterData = dataSource.filter((entry) =>
-      entry.name.toLowerCase().trim().includes(currentVal)
-    );
 
-    setDataSource(filterData);
+    if (currentVal === "") {
+      getAllItem();
+    } else {
+      const filterData = dataSource.filter((entry) =>
+        entry.name.toLowerCase().trim().includes(currentVal)
+      );
+
+      setDataSource(filterData);
+    }
   };
 
   const renderCategory = (categoryId) => {
@@ -220,10 +224,8 @@ const ItemManagement = () => {
           <Form.Item
             name="price"
             label="Price"
-            rules={[
-                { required: true, message: "Please enter a price" },
-              ]}
-              normalize={(value) => (value === '' ? 0 : value)}
+            rules={[{ required: true, message: "Please enter a price" }]}
+            normalize={(value) => (value === "" ? 0 : value)}
           >
             <Input />
           </Form.Item>
@@ -245,10 +247,8 @@ const ItemManagement = () => {
           <Form.Item
             name={["discount", "discount_amount"]}
             label="Discount(%)"
-            rules={[
-                { required: false, message: "Please enter a discount" },
-              ]}
-              normalize={(value) => (value === '' ? 0 : value)}
+            rules={[{ required: false, message: "Please enter a discount" }]}
+            normalize={(value) => (value === "" ? 0 : value)}
           >
             <Input />
           </Form.Item>

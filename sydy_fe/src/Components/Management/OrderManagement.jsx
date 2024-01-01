@@ -1,38 +1,85 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, Modal } from "antd";
-import Descriptions from "antd/lib/descriptions";
+import { Table, Tag, Modal, Descriptions, Button, Space, Rate } from "antd";
 import OrderServices from "../../Services/OrderService";
 
-const OrderDetails = ({ order }) => { 
-  function renderDataAsItems(data) {
-    const items = [];
-    for (const key in data) {
-      let label = key.charAt(0).toUpperCase() + key.slice(1);
-      let children = data[key];
-  
-      if (key === 'order_date' || key === 'created_at') {
-        // Format date values
-        children = new Date(children).toLocaleString();
-      }
-  
-      items.push({
-        key: key,
-        label: label,
-        children: children,
-      });
-    }
-    return items;
-  }
-  return (
-    <Descriptions bordered layout="vertical" items={renderDataAsItems(order)} />
-  )
-};
+const OrderDetails = ({ order }) => {
+  const {
+    order_id,
+    order_date,
+    status,
+    shipper,
+    total,
+    user_id,
+    phone,
+    address,
+    items,
+  } = order;
+  const [dataSource, setDataSource] = useState([]);
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+    {
+      title: "Note",
+      dataIndex: "note",
+      key: "note",
+    },
+    {
+      title: "Rating",
+      dataIndex: "rating",
+      key: "rating",
+      render: (rating) => (rating ? <Rate disabled value={rating}/> : null),
+    },
+  ];
 
+  useEffect(() => {
+    // Transform items data for the table
+    const transformedData = items.map((item) => ({
+      key: item.id,
+      name: item.name,
+      quantity: item.quantity,
+      note: item.note,
+      rating: item.rating,
+    }));
+
+    // Update dataSource state with the transformed data
+    setDataSource(transformedData);
+  }, [items]);
+  return (
+    <Space direction="vertical">
+      <Descriptions
+        size="small"
+        title={`Order Details - Order ID: ${order_id}`}
+      >
+        <Descriptions.Item label="Order Date">{order_date}</Descriptions.Item>
+        <Descriptions.Item label="Total">{total}</Descriptions.Item>
+        <Descriptions.Item label="Status">
+          <Tag color={status.code === 1 ? "blue" : "green"}>{status.name}</Tag>
+        </Descriptions.Item>
+        <Descriptions.Item label="User ID">{user_id}</Descriptions.Item>
+        <Descriptions.Item label="Phone">{phone}</Descriptions.Item>
+        <Descriptions.Item label="Address">{address}</Descriptions.Item>
+        <Descriptions.Item label="Shipper">{shipper.name}</Descriptions.Item>
+      </Descriptions>
+
+          <Table columns={columns} dataSource={dataSource} pagination={false} />
+       
+     
+    </Space>
+  );
+};
 
 const OrderManagement = () => {
   const OrderServicesInstance = new OrderServices();
   const [data, setData] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(null); 
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const columns = [
     {
@@ -47,11 +94,19 @@ const OrderManagement = () => {
     },
     {
       title: "Status",
-      dataIndex: "status_code",
-      key: "status_code",
+      dataIndex: "status",
+      key: "status",
       render: (status) => (
-        <Tag color={status === 1 ? "green" : status === 2 ? "blue" : "red"}>
-          {status === 1 ? "Paid" : status === 2 ? "Processing" : "Pending"}
+        <Tag
+          color={
+            status.code === 1 ? "green" : status.code === 2 ? "blue" : "red"
+          }
+        >
+          {status.code === 1
+            ? "Paid"
+            : status.code === 2
+            ? "Processing"
+            : "Pending"}
         </Tag>
       ),
     },
@@ -104,12 +159,7 @@ const OrderManagement = () => {
       />
 
       {/* Modal for displaying order details */}
-      <Modal
-        title="Order Details"
-        open={isModalVisible}
-        onCancel={handleModalClose}
-        footer={null}
-      >
+      <Modal open={isModalVisible} onCancel={handleModalClose} footer={null} width={700}>
         {selectedOrder && <OrderDetails order={selectedOrder} />}
       </Modal>
     </div>

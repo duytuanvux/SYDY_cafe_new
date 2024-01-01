@@ -1,9 +1,7 @@
-// UserInfo.js
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button, message, Card } from "antd";
 import UserServices from "../Services/UserServices";
 import { useSelector } from "react-redux";
-
 
 const UserInfo = ({ userId }) => {
   const userInfo = useSelector((state) => state.auth.user);
@@ -43,66 +41,74 @@ const UserInfo = ({ userId }) => {
   };
 
   return (
-    <Form
-      form={form}
-      labelCol={{ span: 6 }}
-      wrapperCol={{ span: 12 }}
-      onFinish={onFinish}
-    >
-      <Form.Item label="User ID" name="user_id">
-        <Input disabled />
-      </Form.Item>
-
-      <Form.Item label="Username" name="username">
-        <Input disabled />
-      </Form.Item>
-
-      <Form.Item
-        label="Fullname"
-        name="fullname"
-        rules={[{ required: true, message: "Please input your fullname!" }]}
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <Card title="User Information" bordered={false} style={{ width: "50%" }}>
+      <Form
+        form={form}
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 12 }}
+        onFinish={onFinish}
       >
-        <Input />
-      </Form.Item>
+        <Form.Item label="User ID" name="user_id">
+          <Input disabled />
+        </Form.Item>
 
-      <Form.Item
-        label="Email"
-        name="email"
-        rules={[
-          { required: true, message: "Please input your email!" },
-          { type: "email", message: "Please enter a valid email address!" },
-        ]}
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item label="Username" name="username">
+          <Input disabled />
+        </Form.Item>
 
-      <Form.Item
-        label="Phone"
-        name="phone"
-        rules={[
-          { required: true, message: "Please input your phone!" },
-          {
-            pattern: /^\d{10}$/,
-            message: "Please enter a valid phone number!",
-          },
-          { max: 11, message: "Phone number must be at most 11 digits long" },
-        ]}
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item
+          label="Fullname"
+          name="fullname"
+          rules={[{ required: true, message: "Please input your fullname!" }]}
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item
-        label="Address"
-        name="address"
-        rules={[{ required: true, message: "Please input your address!" }]}
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[
+            { required: true, message: "Please input your email!" },
+            {
+              type: "email",
+              message: "Please enter a valid email address!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item wrapperCol={{ offset: 6, span: 12 }}>
-        <Button htmlType="submit">Update</Button>
-      </Form.Item>
-    </Form>
+        <Form.Item
+          label="Phone"
+          name="phone"
+          rules={[
+            { required: true, message: "Please input your phone!" },
+            {
+              pattern: /^\d{10}$/,
+              message: "Please enter a valid phone number!",
+            },
+            { max: 11, message: "Phone number must be at most 11 digits long" },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Address"
+          name="address"
+          rules={[{ required: true, message: "Please input your address!" }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item wrapperCol={{ offset: 6, span: 12 }}>
+          <Button htmlType="submit">Update</Button>
+        </Form.Item>
+      </Form>
+    </Card>
+    </div>
+    
   );
 };
 
