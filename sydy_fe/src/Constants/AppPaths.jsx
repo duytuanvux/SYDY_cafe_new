@@ -17,4 +17,5 @@ export const GET_SHIPPER = "/common/get-shipper";
 export const GET_ALL_USERS = "/user/get-all-users";
 export const GET_STATUS = "/common/get-status";
 export const UPDATE_STATUS_ORDER = "/order/update-status";
+export const UPDATE_SHIPPER_ORDER = "/order/update-shipper";
 

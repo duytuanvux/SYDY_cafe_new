@@ -108,4 +108,16 @@ function updateStatus(order_id, newStatusCode) {
     });
   });
 }
-module.exports = { create, getAllOrders, updateStatus, getAllOrdersByUserId };
+function updateShipper(order_id, shipper_id) {
+  return new Promise((resolve, reject) => {
+    const sql = "UPDATE `order` SET shipper_id = ? WHERE order_id = ? ";
+    db.query(sql, [shipper_id, order_id], (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+module.exports = { create, getAllOrders, updateStatus, updateShipper, getAllOrdersByUserId };

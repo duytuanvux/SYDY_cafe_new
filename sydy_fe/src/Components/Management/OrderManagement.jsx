@@ -21,8 +21,7 @@ const statusColors = {
   4: "purple", // Completed
   // Add more status codes as needed
 };
-const OrderDetails = ({ order, data }) => {
-  console.log(data);
+const OrderDetails = ({ order, listStatus, listShipper }) => {
   const {
     order_id,
     order_date,
@@ -59,16 +58,22 @@ const OrderDetails = ({ order, data }) => {
       render: (rating) => (rating ? <Rate disabled value={rating} /> : null),
     },
   ];
-
+  const orderServicesInstance = new OrderServices();
   const handleStatusChange = async (value) => {
     try {
       const data = { status_code: value };
-      const orderServicesInstance = new OrderServices();
+      
       const res = await orderServicesInstance.updateStatusOrder(order_id, data);
     } catch (error) {}
   };
 
-  const handleShipperChange = (value) => {};
+  const handleShipperChange = async (value) => {
+    try {
+      const data = { shipper_id : value };
+      
+      const res = await orderServicesInstance.updateShipperOrder(order_id, data);
+    } catch (error) {}
+  };
 
   useEffect(() => {
     // Transform items data for the table
@@ -80,7 +85,7 @@ const OrderDetails = ({ order, data }) => {
       rating: item.rating,
     }));
 
-    // Update dataSource state with the transformed data
+    
     setDataSource(transformedData);
   }, [items]);
 
@@ -94,7 +99,7 @@ const OrderDetails = ({ order, data }) => {
         <Descriptions.Item label="Total">{total}</Descriptions.Item>
         <Descriptions.Item label="Status">
           <Select value={status.code} onChange={handleStatusChange}>
-            {data.map((statusOption) => (
+            {listStatus.map((statusOption) => (
               <Option
                 key={statusOption.status_code}
                 value={statusOption.status_code}
@@ -108,10 +113,15 @@ const OrderDetails = ({ order, data }) => {
         <Descriptions.Item label="Phone">{phone}</Descriptions.Item>
         <Descriptions.Item label="Address">{address}</Descriptions.Item>
         <Descriptions.Item label="Shipper">
-          <Select value={shipper.shiper_id} onChange={handleShipperChange}>
-            <Option value={1}>Shipper 1</Option>
-            <Option value={2}>Shipper 2</Option>
-            {/* Add more options as needed */}
+          <Select value={shipper.shipper_id} onChange={handleShipperChange}>
+          {listShipper.map((shipperOption) => (
+              <Option
+                key={shipperOption.shipper_id}
+                value={shipperOption.shipper_id}
+              >
+                {shipperOption.fullname}
+              </Option>
+            ))}
           </Select>
         </Descriptions.Item>
       </Descriptions>
@@ -126,6 +136,7 @@ const OrderManagement = () => {
   const CommonServicesInstance = new CommonServices();
   const [data, setData] = useState([]);
   const [statusList, setStatusList] = useState([]);
+  const [shipperList, setShipperList] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const columns = [
@@ -196,11 +207,19 @@ const OrderManagement = () => {
     } catch (error) {
       console.error("Error fetching status:", error);
     }
+  }
+  const getShipper = async () => {
+    try {
+      const res = await CommonServicesInstance.getShipper();
+      setShipperList(res);
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
   };
-
   useEffect(() => {
     getAllOrder();
     getStatus();
+    getShipper();
   }, []);
   const handleOpenModal = (order) => {
     setSelectedOrder(order);
@@ -228,7 +247,7 @@ const OrderManagement = () => {
         width={700}
       >
         {selectedOrder && (
-          <OrderDetails order={selectedOrder} data={statusList} />
+          <OrderDetails order={selectedOrder} listStatus={statusList} listShipper={shipperList} />
         )}
       </Modal>
     </div>

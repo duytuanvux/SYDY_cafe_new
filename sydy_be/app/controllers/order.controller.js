@@ -69,4 +69,16 @@ exports.updateOrderStatus = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+exports.updateOrderShipper = async (req, res) => {
+  const orderId = req.params.orderId;
+  const shipper_id = req.body.shipper_id;
+
+  try {
+    await Order.updateShipper(orderId, shipper_id); // Assume you have a method in your Order model to update the status
+    res.status(200).json({ message: "Shipper updated successfully" });
+  } catch (err) {
+    console.error("Error updating order status:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
