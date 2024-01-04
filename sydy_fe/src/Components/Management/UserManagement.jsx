@@ -15,31 +15,37 @@ const UserManagement = () => {
       title: "User ID",
       dataIndex: "user_id",
       key: "user_id",
+      align: "center",
     },
     {
       title: "Username",
       dataIndex: "username",
       key: "username",
+      align: "center",
     },
     {
       title: "Fullname",
       dataIndex: "fullname",
       key: "fullname",
+      align: "center",
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      align: "center",
     },
     {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
+      align: "center",
     },
     {
       title: "Address",
       dataIndex: "address",
       key: "address",
+      align: "center",
     },
   ];
 

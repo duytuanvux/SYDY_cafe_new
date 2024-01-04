@@ -18,8 +18,9 @@ exports.order = async (req, res) => {
     const orderItemData = req.body.items.map((item) => ({
       order_id: orderId,
       item_id: item.id,
+      discount: item.discount,
       quantity: item.quantity,
-      note: item.note,
+      note: `Đường: ${item.sugar}, Đá: ${item.ice}`,
     }));
 
     await Promise.all(

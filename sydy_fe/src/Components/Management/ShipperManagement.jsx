@@ -18,21 +18,25 @@ const ShipperManagement = () => {
       title: "Shipper ID",
       dataIndex: "shipper_id",
       key: "shipper_id",
+      align: "center",
     },
     {
       title: "Fullname",
       dataIndex: "fullname",
       key: "fullname",
+      align: "center",
     },
     {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
+      align: "center",
     },
     {
       title: "Created At",
       dataIndex: "created_at",
       key: "created_at",
+      align: "center",
     },
   ];
 

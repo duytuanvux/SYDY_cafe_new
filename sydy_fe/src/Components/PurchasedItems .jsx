@@ -37,7 +37,7 @@ const PurchasedItems = ({ order, reFetch }) => {
       <Card title={`Order ID: #${order.order_id}`} className="w-full">
         <p>
           <strong>Order Date:</strong>{" "}
-          {new Date(order.order_date).toLocaleDateString()}
+          {order.order_date}
         </p>
         <p>
           <strong>Status:</strong> {order.status.name}

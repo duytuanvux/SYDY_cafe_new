@@ -2,7 +2,17 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../Redux/Reducers/CartReducer";
 import Modal from "antd/es/modal/Modal";
 import { useState } from "react";
-import { InputNumber, Radio, Form, Card, Rate, Typography, Badge } from "antd";
+import {
+  InputNumber,
+  Radio,
+  Form,
+  Card,
+  Rate,
+  Typography,
+  Badge,
+  Row,
+  Col,
+} from "antd";
 
 const { Text } = Typography;
 
@@ -11,9 +21,31 @@ function Item({ item }) {
   const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(1);
 
+  const handleAddToCart = (values) => {
+  const discountAmount = item.discount?.discount_amount || 0;
+  const priceToAdd = item.price - (item.price * discountAmount) / 100;
+
+  dispatch(addToCart({ ...item, ...values, price: priceToAdd, discount: discountAmount }));
+  setModalOpen(false);
+};
+  const renderButtonText = () => {
+    if (item.discount?.discount_amount) {
+      return `Add to cart - ${item.price - (item.price * item.discount?.discount_amount) / 100} $`;
+    } else {
+      return `Add to cart - ${item.price} $`;
+    }
+  };
   return (
     <>
-      <Badge.Ribbon style={ item.discount?.discount_amount ? { display: 'block' } : {display: "none"}} color="red" text="Sale">
+      <Badge.Ribbon
+        style={
+          item.discount?.discount_amount
+            ? { display: "block" }
+            : { display: "none" }
+        }
+        color="red"
+        text={`${item.discount?.discount_amount}%`}
+      >
         <Card
           style={{ width: 200, height: "auto" }}
           cover={
@@ -41,7 +73,26 @@ function Item({ item }) {
             )}
           </div>
           <div style={{ marginTop: 10 }}>
-            <strong>Price: ${item.price}</strong>
+            {item.discount?.discount_amount ? (
+              <p>
+                <span
+                  style={{
+                    textDecoration: "line-through",
+                    color: "grey",
+                    marginRight: 5,
+                  }}
+                >
+                  ${item.price}
+                </span>
+                <span style={{ color: "red" }}>
+                  $
+                  {item.price -
+                    (item.price * item.discount?.discount_amount) / 100}
+                </span>
+              </p>
+            ) : (
+              <p style={{ color: "black" }}> ${item.price}</p>
+            )}
           </div>
         </Card>
       </Badge.Ribbon>
@@ -56,10 +107,7 @@ function Item({ item }) {
       >
         <Form
           name={item.name}
-          onFinish={(e) => {
-            dispatch(addToCart({ ...item, ...e }));
-            setModalOpen(false);
-          }}
+          onFinish={handleAddToCart}
           initialValues={{
             quantity: 1,
             sugar: "Bình Thường",
@@ -68,47 +116,71 @@ function Item({ item }) {
           style={{ maxWidth: 650 }}
           className="flex flex-col gap-3"
         >
-          <div className="flex gap-5">
-            <div className="item-img">
-              <img src={item.img} alt="" />
-            </div>
-            <div className="flex flex-col gap-2 w-full">
-              <div className="item-name font-bold text-xl">{item.name}</div>
-              <div className="flex justify-between">
-                <div className="item-price text-lg">
-                  {item.price}
-                  <span>đ</span>
-                </div>
+          <Row gutter={16}>
+            <Col span={8}>
+              <div className="item-img">
+                <img src={item.img} alt="" style={{ width: "100%" }} />
+              </div>
+            </Col>
+            <Col span={16}>
+              <div className="flex flex-col gap-2">
+                <div className="item-name font-bold text-xl">{item.name}</div>
+                <div className="flex justify-between">
+                  <div className="item-price text-lg">
+                    {item.discount?.discount_amount ? (
+                      <p>
+                        <span
+                          style={{
+                            textDecoration: "line-through",
+                            color: "grey",
+                            marginRight: 5,
+                          }}
+                        >
+                          ${item.price}
+                        </span>
+                        <span style={{ color: "red" }}>
+                          $
+                          {item.price -
+                            (item.price * item.discount?.discount_amount) / 100}
+                        </span>
+                      </p>
+                    ) : (
+                      <p style={{ color: "black" }}> ${item.price}</p>
+                    )}
+                  </div>
 
-                <Form.Item label="Số lượng" name="quantity">
-                  <InputNumber
-                    min={1}
-                    max={50}
-                    onChange={(e) => setQuantity(e)}
-                  />
+                  <Form.Item label="Số lượng" name="quantity">
+                    <InputNumber
+                      min={1}
+                      max={50}
+                      onChange={(e) => setQuantity(e)}
+                    />
+                  </Form.Item>
+                </div>
+                <Form.Item label="Ngọt" name="sugar">
+                  <Radio.Group>
+                    <Radio value="Ít">Ít</Radio>
+                    <Radio value="Bình Thường">Bình Thường </Radio>
+                    <Radio value="Nhiều">Nhiều</Radio>
+                    <Radio value="Không">Không</Radio>
+                  </Radio.Group>
+                </Form.Item>
+                <Form.Item label="Đá" name="ice">
+                  <Radio.Group>
+                    <Radio value="Ít">Ít</Radio>
+                    <Radio value="Bình Thường">Bình Thường </Radio>
+                    <Radio value="Nhiều">Nhiều</Radio>
+                  </Radio.Group>
                 </Form.Item>
               </div>
-              <Form.Item label="Ngọt" name="sugar">
-                <Radio.Group>
-                  <Radio.Button value="Ít">Ít</Radio.Button>
-                  <Radio.Button value="Bình Thường">Bình Thường </Radio.Button>
-                  <Radio.Button value="Nhiều">Nhiều</Radio.Button>
-                  <Radio.Button value="Không">Không</Radio.Button>
-                </Radio.Group>
-              </Form.Item>
-              <Form.Item label="Đá" name="ice">
-                <Radio.Group>
-                  <Radio.Button value="Ít">Ít</Radio.Button>
-                  <Radio.Button value="Bình Thường">Bình Thường </Radio.Button>
-                  <Radio.Button value="Nhiều">Nhiều</Radio.Button>
-                </Radio.Group>
-              </Form.Item>
-            </div>
-          </div>
+            </Col>
+          </Row>
 
-          <button htmlType="submit" className="button w-full">
-            Thêm vào giỏ hàng : {item.price * quantity} đ
-          </button>
+          <Form.Item>
+            <button className="button w-full">
+              {renderButtonText()}
+            </button>
+          </Form.Item>
         </Form>
       </Modal>
     </>
