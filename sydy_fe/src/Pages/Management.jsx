@@ -4,12 +4,27 @@ import ItemManagement from "../Components/Management/ItemManagement";
 import OrderManagement from "../Components/Management/OrderManagement";
 import ShipperManagement from "../Components/Management/ShipperManagement";
 import UserManagement from "../Components/Management/UserManagement";
+import OrderServices from "../Services/OrderService";
+import { useEffect, useState } from "react";
 const Management = () => {
+  const [order_count, setOrderCount] = useState()
+  const OrderServicesInstance = new OrderServices()
+  const getOrderNeedAction = async () => {
+    try {
+      const res = await OrderServicesInstance.orderNeedAction() 
+      setOrderCount(res.data[0].order_count)
+    } catch (error) {
+      
+    }
+  }
+  useEffect(() => {
+    getOrderNeedAction()
+  })
   const tab = [
     {
       key: "order",
       label: "Quản lý đơn hàng",
-      icon: <Badge count={1} color="red" />,
+      icon: <Badge count={order_count} color="red" />,
       children: <OrderManagement />,
     },
     {

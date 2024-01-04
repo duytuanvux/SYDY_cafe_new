@@ -123,6 +123,8 @@ const ItemManagement = () => {
       dataIndex: "category_id",
       key: "category_id",
       align: "center",
+      filters: categories.map(category => ({ text: category.name, value: category.id })),
+    onFilter: (value, record) => record.category_id === value,
       render: (category_id) => renderCategory(category_id),
     },
     {
@@ -143,6 +145,11 @@ const ItemManagement = () => {
       dataIndex: "is_visible",
       key: "is_visible",
       align: "center",
+      filters: [
+        { text: "Yes", value: true },
+        { text: "No", value: false },
+      ],
+      onFilter: (value, record) => record.is_visible === value,
       render: (isVisible) => (isVisible ? "Yes" : "No"),
     },
     {

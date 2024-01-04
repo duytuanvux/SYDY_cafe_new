@@ -45,7 +45,10 @@ function groupItems(orders) {
     if (!groupedOrders[key]) {
       groupedOrders[key] = {
         order_id: order.order_id,
-        order_date: order.order_date.toISOString().split("T")[0],
+        order_date: order.order_date.toLocaleDateString('en-GB', {
+          hour: 'numeric',
+          minute: 'numeric'
+      }),
         status: {
           code: order.status_code,
           name: order.status_name,
@@ -120,4 +123,16 @@ function updateShipper(order_id, shipper_id) {
     });
   });
 }
-module.exports = { create, getAllOrders, updateStatus, updateShipper, getAllOrdersByUserId };
+function orderNeedAction() {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT COUNT(*) AS order_count FROM `order`  WHERE status_code = 1 ";
+    db.query(sql, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+module.exports = { create, getAllOrders, updateStatus, updateShipper, orderNeedAction, getAllOrdersByUserId };

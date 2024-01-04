@@ -81,4 +81,22 @@ exports.updateOrderShipper = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+exports.orderNeedAction = async (req, res) => {
+  try {
+    const data = await Order.orderNeedAction(); // Assume you have a method in your Order model to update the status
+    res.status(200).json({
+      success: true,
+      message: "Successfully retrieved orders needing action",
+      data: data,
+    });
+  } catch (error) {
+    console.error("Error retrieving orders:", error);
+    res.status(500).json({
+      success: false,
+      error: "Internal Server Error",
+      message: error.message || "Unknown error",
+    });
+  }
+};
+
 

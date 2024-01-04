@@ -9,6 +9,7 @@ router.get('/user/:user_id', OrderController.getOrderByUserId);
 router.get('/get-all-orders', OrderController.getAllOrder);
 router.put('/update-status/:orderId', OrderController.updateOrderStatus);
 router.put('/update-shipper/:orderId', OrderController.updateOrderShipper);
+router.get('/order-need-action/', OrderController.orderNeedAction);
 
 
 module.exports = router;

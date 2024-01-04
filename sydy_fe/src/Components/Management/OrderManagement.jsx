@@ -34,7 +34,8 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
     items,
   } = order;
   const [dataSource, setDataSource] = useState([]);
-
+  const [selectedStatus, setSelectedStatus] = useState(status.code);
+  const [selectedShipper, setSelectedShipper] = useState(shipper.shipper_id);
   const columns = [
     {
       title: "Name",
@@ -59,24 +60,18 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
     },
   ];
   const orderServicesInstance = new OrderServices();
-  const handleStatusChange = async (value) => {
-    try {
-      const data = { status_code: value };
-      
-      const res = await orderServicesInstance.updateStatusOrder(order_id, data);
-    } catch (error) {}
+
+  const updateOrderStatus = async (value) => {
+    setSelectedStatus(value);
+    await orderServicesInstance.updateStatusOrder(order_id, { status_code: value });
   };
 
-  const handleShipperChange = async (value) => {
-    try {
-      const data = { shipper_id : value };
-      
-      const res = await orderServicesInstance.updateShipperOrder(order_id, data);
-    } catch (error) {}
+  const updateOrderShipper = async (value) => {
+    setSelectedShipper(value);
+    await orderServicesInstance.updateShipperOrder(order_id, { shipper_id: value });
   };
 
   useEffect(() => {
-    // Transform items data for the table
     const transformedData = items.map((item) => ({
       key: item.id,
       name: item.name,
@@ -85,7 +80,6 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
       rating: item.rating,
     }));
 
-    
     setDataSource(transformedData);
   }, [items]);
 
@@ -98,7 +92,12 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
         <Descriptions.Item label="Order Date">{order_date}</Descriptions.Item>
         <Descriptions.Item label="Total">{total}</Descriptions.Item>
         <Descriptions.Item label="Status">
-          <Select value={status.code} onChange={handleStatusChange}>
+          <Select
+            value={selectedStatus}
+            onChange={updateOrderStatus}
+            style={{ width: "150px" }}
+            disabled={selectedStatus === 4 || selectedStatus === 0 }
+          >
             {listStatus.map((statusOption) => (
               <Option
                 key={statusOption.status_code}
@@ -113,8 +112,13 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
         <Descriptions.Item label="Phone">{phone}</Descriptions.Item>
         <Descriptions.Item label="Address">{address}</Descriptions.Item>
         <Descriptions.Item label="Shipper">
-          <Select value={shipper.shipper_id} onChange={handleShipperChange}>
-          {listShipper.map((shipperOption) => (
+          <Select
+            value={selectedShipper}
+            onChange={updateOrderShipper}
+            style={{ width: "150px" }}
+            disabled={selectedStatus === 4 || selectedStatus === 0 }
+          >
+            {listShipper.map((shipperOption) => (
               <Option
                 key={shipperOption.shipper_id}
                 value={shipperOption.shipper_id}
@@ -145,12 +149,15 @@ const OrderManagement = () => {
       dataIndex: "order_id",
       key: "order_id",
       align: "center",
+      sorter: (a, b) => a.order_id - b.order_id,
+      defaultSortOrder: 'desc'
     },
     {
       title: "Order Date",
       dataIndex: "order_date",
       key: "order_date",
       align: "center",
+      sorter: (a, b) => new Date(a.order_date) - new Date(b.order_date),
     },
     {
       title: "Status",
@@ -158,18 +165,22 @@ const OrderManagement = () => {
       key: "status",
       align: "center",
       render: (status) => renderStatus(status),
+      filters: statusList.map((status) => ({ text: status.status_name, value: status.status_code })),
+      onFilter: (value, record) => record.status.code === value,
     },
     {
       title: "Total",
       dataIndex: "total",
       key: "total",
       align: "center",
+      sorter: (a, b) => a.total - b.total,
     },
     {
       title: "Payment Method ID",
       dataIndex: "payment_method_id",
       key: "payment_method_id",
       align: "center",
+      sorter: (a, b) => a.payment_method_id - b.payment_method_id,
     },
     {
       title: "Actions",
@@ -180,6 +191,7 @@ const OrderManagement = () => {
       ),
     },
   ];
+  
   const renderStatus = (status) => {
     const { code, name } = status;
     const color = statusColors[code];
@@ -194,10 +206,7 @@ const OrderManagement = () => {
   const getAllOrder = async () => {
     try {
       const res = await OrderServicesInstance.getAllOrder();
-      const sortedData = res.data.sort(
-        (a, b) => new Date(b.order_date) - new Date(a.order_date)
-      );
-      setData(sortedData);
+      setData(res.data);
     } catch (error) {}
   };
   const getStatus = async () => {
@@ -207,7 +216,7 @@ const OrderManagement = () => {
     } catch (error) {
       console.error("Error fetching status:", error);
     }
-  }
+  };
   const getShipper = async () => {
     try {
       const res = await CommonServicesInstance.getShipper();
@@ -227,6 +236,7 @@ const OrderManagement = () => {
   };
 
   const handleModalClose = () => {
+    getAllOrder();
     setIsModalVisible(false);
   };
   return (
@@ -243,11 +253,17 @@ const OrderManagement = () => {
       <Modal
         open={isModalVisible}
         onCancel={handleModalClose}
+        destroyOnClose
         footer={null}
         width={700}
       >
         {selectedOrder && (
-          <OrderDetails order={selectedOrder} listStatus={statusList} listShipper={shipperList} />
+          <OrderDetails
+            order={selectedOrder}
+            listStatus={statusList}
+            listShipper={shipperList}
+            reFetch={getAllOrder}
+          />
         )}
       </Modal>
     </div>
