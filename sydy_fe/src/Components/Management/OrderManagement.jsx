@@ -187,10 +187,16 @@ const OrderManagement = () => {
       key: "actions",
       align: "center",
       render: (_, record) => (
-        <button onClick={() => handleOpenModal(record)}>View Details</button>
+        <Space>
+        <button onClick={() => handleOpenModal(record)}>View</button>
+        <button onClick={() => handlePrintOrder(record)}>Print Order</button>
+      </Space>
       ),
     },
   ];
+  const handlePrintOrder = async (order) => {
+    window.open(`http://localhost:3000/print/order/${order.order_id}?print=true`)
+  };
   
   const renderStatus = (status) => {
     const { code, name } = status;

@@ -86,12 +86,13 @@ function App() {
             <div style={{ height: "10%", marginTop: "auto" }}>
               <button
                 className="button flex items-center justify-between"
+                style={{ width: "100%" }}
                 onClick={() => {
                   setOpen(false);
                   navigate("/cart");
                 }}
               >
-                <span>Tiến hành đặt hàng:</span>
+                <span>Go to cart</span>
                 <span>{`${total}đ`}</span>
               </button>
             </div>

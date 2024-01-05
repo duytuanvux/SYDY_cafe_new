@@ -24,6 +24,7 @@ const fbRoutes = require("./app/routes/feedback.router");
 const orderRoutes = require("./app/routes/order.router");
 const userRoutes = require("./app/routes/user.router");
 const commonRoutes = require("./app/routes/common.router");
+const PDFRoutes = require("./app/routes/PDF.router")
 
 // Mount routes
 app.use("/item", itemRoutes);
@@ -31,6 +32,7 @@ app.use("/feedback", fbRoutes);
 app.use("/order", orderRoutes);
 app.use("/user", userRoutes);
 app.use("/common", commonRoutes);
+app.use("/print", PDFRoutes);
 
 // Start the Express server
 app.listen(port, () => {

@@ -68,8 +68,10 @@ function groupItems(orders) {
     groupedOrders[key].items.push({
       id: order.item_id,
       name : order.name,
+      price: order.price,
       quantity: order.quantity,
       note: order.note,
+      sub_total : order.sub_total,
       rating: order.rating,
     });
   });
@@ -135,4 +137,29 @@ function orderNeedAction() {
     });
   });
 }
-module.exports = { create, getAllOrders, updateStatus, updateShipper, orderNeedAction, getAllOrdersByUserId };
+
+function getOrderByOrderId(order_id) {
+  return new Promise((resolve, reject) => {
+    const sql = `
+    SELECT o.*, os.status_name, oi.item_id, i.id AS item_id, i.name, oi.quantity, oi.price, oi.sub_total, oi.note, f.rating, 
+    s.fullname AS shipper_name
+    FROM \`order\` o
+    LEFT JOIN order_status os ON o.status_code = os.status_code
+    LEFT JOIN order_item oi ON o.order_id = oi.order_id
+    LEFT JOIN item i ON oi.item_id = i.id
+    LEFT JOIN feedback f ON o.order_id = f.order_id AND oi.item_id = f.item_id
+    LEFT JOIN shipper s ON o.shipper_id = s.shipper_id
+    WHERE o.order_id = ?
+  `
+    db.query(sql, [order_id], (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        const groupedOrders = groupItems(data);
+        resolve(groupedOrders);
+      }
+    });
+  });
+}
+
+module.exports = { create, getAllOrders, updateStatus, updateShipper, getOrderByOrderId, orderNeedAction, getAllOrdersByUserId };

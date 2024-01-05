@@ -19,4 +19,5 @@ export const GET_STATUS = "/common/get-status";
 export const UPDATE_STATUS_ORDER = "/order/update-status";
 export const UPDATE_SHIPPER_ORDER = "/order/update-shipper";
 export const ORDER_NEED_ACTION = "/order/order-need-action";
+export const PRINT_ORDER = "/print/order";
 

@@ -20,7 +20,9 @@ exports.order = async (req, res) => {
       item_id: item.id,
       discount: item.discount,
       quantity: item.quantity,
-      note: `Đường: ${item.sugar}, Đá: ${item.ice}`,
+      note: `Sugar: ${item.sugar}, Ice: ${item.ice}`,
+      price: item.price,
+      sub_total: item.subTotal
     }));
 
     await Promise.all(
@@ -97,6 +99,17 @@ exports.orderNeedAction = async (req, res) => {
       error: "Internal Server Error",
       message: error.message || "Unknown error",
     });
+  }
+};
+
+exports.getOrderByOrderId = async (req, res) => {
+  try {
+    const order_id = req.params.order_id;
+    const order = await Order.getOrderByOrderId(order_id);
+    res.json({ order });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 

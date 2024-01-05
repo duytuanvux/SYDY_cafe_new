@@ -24,17 +24,18 @@ function Item({ item }) {
   const handleAddToCart = (values) => {
   const discountAmount = item.discount?.discount_amount || 0;
   const priceToAdd = item.price - (item.price * discountAmount) / 100;
+  const subTotal = priceToAdd * quantity;
 
-  dispatch(addToCart({ ...item, ...values, price: priceToAdd, discount: discountAmount }));
+  dispatch(addToCart({ ...item, ...values, price: priceToAdd, discount: discountAmount, subTotal: subTotal }));
   setModalOpen(false);
 };
-  const renderButtonText = () => {
-    if (item.discount?.discount_amount) {
-      return `Add to cart - ${item.price - (item.price * item.discount?.discount_amount) / 100} $`;
-    } else {
-      return `Add to cart - ${item.price} $`;
-    }
-  };
+const renderButtonText = () => {
+  if (item.discount?.discount_amount) {
+    return `Add to cart - ${item.price - (item.price * item.discount?.discount_amount) / 100} VND`;
+  } else {
+    return `Add to cart - ${item.price} VND`;
+  }
+};
   return (
     <>
       <Badge.Ribbon
@@ -82,16 +83,16 @@ function Item({ item }) {
                     marginRight: 5,
                   }}
                 >
-                  ${item.price}
+                  {`${item.price} VND`}
                 </span>
                 <span style={{ color: "red" }}>
-                  $
-                  {item.price -
-                    (item.price * item.discount?.discount_amount) / 100}
+                  
+                  {`${item.price -
+                    (item.price * item.discount?.discount_amount) / 100} VND`}
                 </span>
               </p>
             ) : (
-              <p style={{ color: "black" }}> ${item.price}</p>
+              <p style={{ color: "black" }}>{`${item.price} VND`}</p>
             )}
           </div>
         </Card>
@@ -103,15 +104,15 @@ function Item({ item }) {
         onCancel={() => setModalOpen(false)}
         destroyOnClose={true}
         footer={null}
-        width={650}
+        width={600}
       >
         <Form
           name={item.name}
           onFinish={handleAddToCart}
           initialValues={{
             quantity: 1,
-            sugar: "Bình Thường",
-            ice: "Bình Thường",
+            sugar: "normal",
+            ice: "normal",
           }}
           style={{ maxWidth: 650 }}
           className="flex flex-col gap-3"
@@ -136,20 +137,20 @@ function Item({ item }) {
                             marginRight: 5,
                           }}
                         >
-                          ${item.price}
+                          {`${item.price} VND`}
                         </span>
                         <span style={{ color: "red" }}>
-                          $
-                          {item.price -
-                            (item.price * item.discount?.discount_amount) / 100}
+                          
+                          {`${item.price -
+                            (item.price * item.discount?.discount_amount) / 100} VND`}
                         </span>
                       </p>
                     ) : (
-                      <p style={{ color: "black" }}> ${item.price}</p>
+                      <p style={{ color: "black" }}> {`${item.price} VND`}</p>
                     )}
                   </div>
 
-                  <Form.Item label="Số lượng" name="quantity">
+                  <Form.Item label="Quantity" name="quantity">
                     <InputNumber
                       min={1}
                       max={50}
@@ -157,19 +158,20 @@ function Item({ item }) {
                     />
                   </Form.Item>
                 </div>
-                <Form.Item label="Ngọt" name="sugar">
+                <Form.Item label="Sugar" name="sugar">
                   <Radio.Group>
-                    <Radio value="Ít">Ít</Radio>
-                    <Radio value="Bình Thường">Bình Thường </Radio>
-                    <Radio value="Nhiều">Nhiều</Radio>
-                    <Radio value="Không">Không</Radio>
+                    <Radio value="less">Less</Radio>
+                    <Radio value="normal">Normal</Radio>
+                    <Radio value="many">Many</Radio>
+                    <Radio value="none">None</Radio>
                   </Radio.Group>
                 </Form.Item>
-                <Form.Item label="Đá" name="ice">
+                <Form.Item label="Ice" name="ice">
                   <Radio.Group>
-                    <Radio value="Ít">Ít</Radio>
-                    <Radio value="Bình Thường">Bình Thường </Radio>
-                    <Radio value="Nhiều">Nhiều</Radio>
+                    <Radio value="less">Less</Radio>
+                    <Radio value="normal">Normal</Radio>
+                    <Radio value="many">Many</Radio>
+                    <Radio value="none">None</Radio>
                   </Radio.Group>
                 </Form.Item>
               </div>
