@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Form,
@@ -13,10 +13,12 @@ import {
   Space,
   Typography,
   Collapse,
+  Radio,
 } from "antd";
 
 import OrderServices from "../Services/OrderService";
 import UserServices from "../Services/UserServices";
+import CommonServices from "../Services/CommonServices";
 
 import { clearCart } from "../Redux/Reducers/CartReducer";
 
@@ -24,25 +26,27 @@ const { Text } = Typography;
 const { Panel } = Collapse;
 
 const Cart = () => {
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  const [order, setOrder] = useState();
+  const [paymentMethods, setPaymentMethods] = useState([]);
+
   const cart = useSelector((state) => state.cart).cart;
   const userInfo = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-
-  const total = cart.reduce(
-    (sum, item) => sum + (item?.price || 0) * (item?.quantity || 0),
-    0
-  );
+  const { user_id } = userInfo;
+  const total = cart.reduce((sum, item) => sum + (item?.price || 0) * (item?.quantity || 0), 0);
 
   const orderServices = new OrderServices();
   const userServiceInstance = new UserServices();
+  const commonServices = new CommonServices();
+  const { getUserInfo } = userServiceInstance;
+  const { getPaymentMethod } = commonServices;
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userData = await userServiceInstance.getUserInfo(
-          userInfo.user_id
-        );
+        const userData = await getUserInfo(user_id);
         form.setFieldsValue(userData.data[0]);
       } catch (error) {
         message.error("Error fetching user data:", error);
@@ -50,25 +54,47 @@ const Cart = () => {
     };
 
     fetchUserData();
-  }, [userInfo, form, userServiceInstance]);
+  }, [user_id, form, getUserInfo]);
+
+  useEffect(() => {
+    const fetchPaymentMethods = async () => {
+      try {
+        const response = await getPaymentMethod();
+        setPaymentMethods(response);
+      } catch (error) {
+        message.error("Error fetching payment methods:", error);
+      }
+    };
+
+    fetchPaymentMethods();
+  }, [getPaymentMethod]);
 
   const handleSubmit = async (values) => {
-    try {
-      const orderData = {
-        items: cart,
-        user_id: userInfo.user_id,
-        fullname: values.fullname,
-        phone: values.phone,
-        address: values.address,
-        total,
-      };
+    const orderData = {
+      items: cart,
+      user_id,
+      ...values,
+      total,
+    };
+    setOrder(orderData);
+  };
 
-      const orderResponse = await orderServices.createOrder(orderData);
-      console.log("Order created successfully:", orderResponse);
+  const handleSubmitOrder = async () => {
+    try {
+      if (!selectedPaymentMethod) {
+        message.error("Please select a payment method before placing the order.");
+        return;
+      }
+
+      const payment_method = selectedPaymentMethod;
+      const orderData = { ...order, payment_method };
+      await orderServices.createOrder(orderData);
+
       dispatch(clearCart());
-      message.success("Order created successfully");
+
+      message.success("Order placed successfully!");
     } catch (error) {
-      message.error("Error creating order. Please try again.");
+      message.error("Error placing the order:", error);
     }
   };
 
@@ -83,9 +109,8 @@ const Cart = () => {
   }
 
   return (
-    <div style={{ maxWidth: 800, margin: "auto",padding: 16 }}>
-      <Collapse defaultActiveKey={["1", "2", "3"]}>
-        {/* Segment 1: Items */}
+    <div style={{ maxWidth: 800, margin: "auto", padding: 16 }}>
+      <Collapse activeKey={["1", "2", "3"]}>
         <Panel header="Items in cart" key="1">
           {cart.map((item) => (
             <Card key={item.id} style={{ marginBottom: 16 }}>
@@ -102,7 +127,11 @@ const Cart = () => {
                   />
                 </Col>
                 <Col span={16}>
-                  <Space direction="vertical" size={8} style={{ width: "100%" }}>
+                  <Space
+                    direction="vertical"
+                    size={8}
+                    style={{ width: "100%" }}
+                  >
                     <Text strong>{item.name}</Text>
                     <Text>{`Sugar: ${item.sugar}, Ice: ${item.ice}`}</Text>
                     <Text type="danger">{`${item.price} VND`}</Text>
@@ -116,7 +145,6 @@ const Cart = () => {
           <div>Total: {total} VND</div>
         </Panel>
 
-        {/* Segment 2: User Info Form */}
         <Panel header="Delivery Information" key="2">
           <Form form={form} onFinish={handleSubmit}>
             <Form.Item
@@ -140,26 +168,37 @@ const Cart = () => {
             <Form.Item
               label="Address"
               name="address"
-              rules={[
-                { required: true, message: "Please enter your address" },
-              ]}
+              rules={[{ required: true, message: "Please enter your address" }]}
             >
               <Input.TextArea />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Submit Order
-              </Button>
+              <Button htmlType="submit">Save</Button>
             </Form.Item>
           </Form>
         </Panel>
 
-        {/* Segment 3: Payment Method (Add your payment method UI here) */}
         <Panel header="Payment Method" key="3">
-          {/* Add your payment method UI components here */}
-          <p>Payment method options go here...</p>
+          <div>
+            <Radio.Group
+              onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+              value={selectedPaymentMethod}
+            >
+              {paymentMethods.map((method) => (
+                <Radio
+                  key={method.payment_method_id}
+                  value={method.payment_method_id}
+                >
+                  {method.method_name}
+                </Radio>
+              ))}
+            </Radio.Group>
+          </div>
         </Panel>
       </Collapse>
+      <div style={{ marginTop: 16, textAlign: "center" }}>
+        <Button onClick={handleSubmitOrder}>Place Order</Button>
+      </div>
     </div>
   );
 };

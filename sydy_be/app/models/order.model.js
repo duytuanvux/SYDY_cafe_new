@@ -16,7 +16,7 @@ function create(orderData) {
 function getAllOrdersByUserId(user_id) {
   return new Promise((resolve, reject) => {
     const sql = `
-      SELECT o.*, os.status_name, oi.item_id, i.id AS item_id, i.name, oi.quantity, oi.note, f.rating, 
+      SELECT o.*, os.status_name, oi.item_id, i.id AS item_id, i.name, oi.note, oi.quantity, oi.price, oi.sub_total,  f.rating, p.method_name,
       s.fullname AS shipper_name
       FROM \`order\` o
       LEFT JOIN order_status os ON o.status_code = os.status_code
@@ -24,6 +24,7 @@ function getAllOrdersByUserId(user_id) {
       LEFT JOIN item i ON oi.item_id = i.id
       LEFT JOIN feedback f ON o.order_id = f.order_id AND oi.item_id = f.item_id
       LEFT JOIN shipper s ON o.shipper_id = s.shipper_id
+      LEFT JOIN payment_method p ON o.payment_method_id = p.payment_method_id
       WHERE o.user_id = ?;
       `;
     db.query(sql, user_id, (err, data) => {
@@ -58,6 +59,11 @@ function groupItems(orders) {
           name: order.shipper_name,
         },
         total: parseFloat(order.total),
+        payment_method: {
+          id : order.payment_method_id,
+          name : order.method_name
+        },
+        isPaid : order.isPaid,
         user_id: order.user_id,
         phone: order.phone,
         address: order.address,
@@ -82,14 +88,15 @@ function groupItems(orders) {
 function getAllOrders() {
   return new Promise((resolve, reject) => {
     const sql = `
-      SELECT o.*, os.status_name, oi.item_id, i.id AS item_id, i.name, oi.quantity, oi.note, f.rating, 
-      s.fullname AS shipper_name
-      FROM \`order\` o
-      LEFT JOIN order_status os ON o.status_code = os.status_code
-      LEFT JOIN order_item oi ON o.order_id = oi.order_id
-      LEFT JOIN item i ON oi.item_id = i.id
-      LEFT JOIN feedback f ON o.order_id = f.order_id AND oi.item_id = f.item_id
-      LEFT JOIN shipper s ON o.shipper_id = s.shipper_id
+    SELECT o.*, os.status_name, oi.item_id, i.id AS item_id, i.name, oi.note, oi.quantity, oi.price, oi.sub_total,  f.rating, p.method_name,
+    s.fullname AS shipper_name
+    FROM \`order\` o
+    LEFT JOIN order_status os ON o.status_code = os.status_code
+    LEFT JOIN order_item oi ON o.order_id = oi.order_id
+    LEFT JOIN item i ON oi.item_id = i.id
+    LEFT JOIN feedback f ON o.order_id = f.order_id AND oi.item_id = f.item_id
+    LEFT JOIN shipper s ON o.shipper_id = s.shipper_id
+    LEFT JOIN payment_method p ON o.payment_method_id = p.payment_method_id
       `;
     db.query(sql, (err, data) => {
       if (err) {

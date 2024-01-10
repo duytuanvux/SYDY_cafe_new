@@ -80,7 +80,6 @@ const ItemManagement = () => {
   };
 
   const handleFinish = (item) => {
-    console.log(item);
     const actionType = item.id ? "edit" : "add";
     handleItemAction(actionType, item.id, item);
     setModalState({ isOpen: false, data: null });
@@ -113,13 +112,13 @@ const ItemManagement = () => {
       align: "center",
     },
     {
-      title: "Tên sản phẩm",
+      title: "Name",
       dataIndex: "name",
       key: "name",
       align: "center",
     },
     {
-      title: "Danh mục",
+      title: "Category",
       dataIndex: "category_id",
       key: "category_id",
       align: "center",
@@ -128,14 +127,14 @@ const ItemManagement = () => {
       render: (category_id) => renderCategory(category_id),
     },
     {
-      title: "Hình ảnh",
+      title: "Image",
       dataIndex: "img",
       key: "img",
       align: "center",
       render: (item) => <Image width={200} src={item} alt="" />,
     },
     {
-      title: "Giá",
+      title: "Price",
       dataIndex: "price",
       key: "price",
       align: "center",
@@ -153,7 +152,7 @@ const ItemManagement = () => {
       render: (isVisible) => (isVisible ? "Yes" : "No"),
     },
     {
-      title: "Hành động",
+      title: "Action",
       key: "action",
       align: "center",
       render: (item) => (
@@ -167,8 +166,8 @@ const ItemManagement = () => {
     <>
       <div className="flex items-center justify-center">
         <div className="flex w-1/2 p-5 gap-5">
-          <Button onClick={() => showModal()}>Thêm sản phẩm</Button>
-          <Input placeholder="Tìm kiếm" onChange={handleSearch} />
+          <Button onClick={() => showModal()}>Add Item</Button>
+          <Input placeholder="Search" onChange={handleSearch} />
         </div>
       </div>
       <Table

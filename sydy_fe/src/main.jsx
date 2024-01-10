@@ -18,6 +18,8 @@ import Order from "./Pages/Order.jsx";
 import PrivateRoute from "./Components/PrivateRoute.jsx";
 import Unauthorized from "./Pages/Unauthorized.jsx";
 import About from "./Pages/About.jsx";
+import ResetPassword from "./Pages/ResetPw.jsx";
+import ForgotPassword from "./Pages/ForgotPW.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
@@ -30,6 +32,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="drinks" element={<Drinks />} />
             <Route path="cart" element={<PrivateRoute><Cart /></PrivateRoute>}></Route>
             <Route path="about" element={<About />}></Route>
+            <Route path="reset-password" element={<ResetPassword />}></Route>
+            <Route path="forgot-password" element={<ForgotPassword />}></Route>
             <Route path="404" element={<NotFound />} />
             <Route path="unauthorized" element={<Unauthorized />} />
             <Route path="*" element={<Navigate replace to="404" />} />

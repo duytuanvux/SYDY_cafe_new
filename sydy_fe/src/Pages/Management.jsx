@@ -23,30 +23,30 @@ const Management = () => {
   const tab = [
     {
       key: "order",
-      label: "Quản lý đơn hàng",
+      label: "Order",
       icon: <Badge count={order_count} color="red" />,
       children: <OrderManagement />,
     },
     {
       key: "item",
-      label: "Quản lý sản phẩm",
+      label: "Item",
       children: <ItemManagement />,
     },
     {
       key: "user",
-      label: "Quản lý người dùng",
+      label: "User",
       children: <UserManagement />,
     },
     {
       key: "shipper",
-      label: "Quản lý người giao hàng",
+      label: "Deliver",
       children: <ShipperManagement />,
     },
   ];
 
   return (
     <>
-      <div className="text-center uppercase m-5 text-4xl">Quản lý</div>
+      <div className="text-center uppercase m-5 text-4xl">Mannagement</div>
       <Tabs centered items={tab}></Tabs>
     </>
   );

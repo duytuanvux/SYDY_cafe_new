@@ -14,13 +14,23 @@ import CommonServices from "../../Services/CommonServices";
 
 const { Option } = Select;
 const statusColors = {
-  0: "gray", // Cancelled
-  1: "blue", // Pending
-  2: "orange", // Processing
-  3: "green", // Delivering
-  4: "purple", // Completed
-  // Add more status codes as needed
+  0: "gray",    // Cancelled
+  1: "blue",    // Pending
+  2: "orange",  // Processing
+  3: "green",   // Delivering
+  4: "purple",  // Completed
 };
+
+const paymentColor = {
+  1: "red",
+  2: "green",
+};
+
+const paymentStatusColor = {
+  true: paymentColor[2],  // Paid
+  false: paymentColor[1], // Unpaid
+};
+
 const OrderDetails = ({ order, listStatus, listShipper }) => {
   const {
     order_id,
@@ -32,33 +42,22 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
     phone,
     address,
     items,
+    payment_method,
+    isPaid,
   } = order;
-  const [dataSource, setDataSource] = useState([]);
+
+  const transformedData = items.map(({ id, name, quantity, note, rating }) => ({
+    key: id,
+    name,
+    quantity,
+    note,
+    rating: rating ? <Rate disabled value={rating} /> : null,
+  }));
+
+  const [dataSource, setDataSource] = useState(transformedData);
   const [selectedStatus, setSelectedStatus] = useState(status.code);
   const [selectedShipper, setSelectedShipper] = useState(shipper.shipper_id);
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
-    },
-    {
-      title: "Note",
-      dataIndex: "note",
-      key: "note",
-    },
-    {
-      title: "Rating",
-      dataIndex: "rating",
-      key: "rating",
-      render: (rating) => (rating ? <Rate disabled value={rating} /> : null),
-    },
-  ];
+
   const orderServicesInstance = new OrderServices();
 
   const updateOrderStatus = async (value) => {
@@ -72,14 +71,6 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
   };
 
   useEffect(() => {
-    const transformedData = items.map((item) => ({
-      key: item.id,
-      name: item.name,
-      quantity: item.quantity,
-      note: item.note,
-      rating: item.rating,
-    }));
-
     setDataSource(transformedData);
   }, [items]);
 
@@ -96,7 +87,7 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
             value={selectedStatus}
             onChange={updateOrderStatus}
             style={{ width: "150px" }}
-            disabled={selectedStatus === 4 || selectedStatus === 0 }
+            disabled={selectedStatus === 4 || selectedStatus === 0}
           >
             {listStatus.map((statusOption) => (
               <Option
@@ -108,15 +99,18 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
             ))}
           </Select>
         </Descriptions.Item>
-        <Descriptions.Item label="User ID">{user_id}</Descriptions.Item>
-        <Descriptions.Item label="Phone">{phone}</Descriptions.Item>
-        <Descriptions.Item label="Address">{address}</Descriptions.Item>
-        <Descriptions.Item label="Shipper">
+        <Descriptions.Item label="Payment Method">
+            {payment_method.name}
+          </Descriptions.Item>
+          <Descriptions.Item label="Payment Status">
+            {isPaid ? "Paid" : "Unpaid"}
+          </Descriptions.Item>
+          <Descriptions.Item label="Shipper">
           <Select
             value={selectedShipper}
             onChange={updateOrderShipper}
             style={{ width: "150px" }}
-            disabled={selectedStatus === 4 || selectedStatus === 0 }
+            disabled={selectedStatus === 4 || selectedStatus === 0}
           >
             {listShipper.map((shipperOption) => (
               <Option
@@ -128,6 +122,12 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
             ))}
           </Select>
         </Descriptions.Item>
+        <Descriptions.Item label="User ID">{user_id}</Descriptions.Item>
+        <Descriptions.Item label="Phone">{phone}</Descriptions.Item>
+        <Descriptions.Item label="Address">{address}</Descriptions.Item>
+        
+        
+          
       </Descriptions>
 
       <Table columns={columns} dataSource={dataSource} pagination={false} />
@@ -138,6 +138,7 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
 const OrderManagement = () => {
   const OrderServicesInstance = new OrderServices();
   const CommonServicesInstance = new CommonServices();
+  
   const [data, setData] = useState([]);
   const [statusList, setStatusList] = useState([]);
   const [shipperList, setShipperList] = useState([]);
@@ -150,7 +151,7 @@ const OrderManagement = () => {
       key: "order_id",
       align: "center",
       sorter: (a, b) => a.order_id - b.order_id,
-      defaultSortOrder: 'desc'
+      defaultSortOrder: "desc",
     },
     {
       title: "Order Date",
@@ -165,7 +166,10 @@ const OrderManagement = () => {
       key: "status",
       align: "center",
       render: (status) => renderStatus(status),
-      filters: statusList.map((status) => ({ text: status.status_name, value: status.status_code })),
+      filters: statusList.map((status) => ({
+        text: status.status_name,
+        value: status.status_code,
+      })),
       onFilter: (value, record) => record.status.code === value,
     },
     {
@@ -176,11 +180,17 @@ const OrderManagement = () => {
       sorter: (a, b) => a.total - b.total,
     },
     {
-      title: "Payment Method ID",
-      dataIndex: "payment_method_id",
-      key: "payment_method_id",
+      title: "Payment Method",
+      dataIndex: "payment_method",
+      key: "payment_method",
       align: "center",
-      sorter: (a, b) => a.payment_method_id - b.payment_method_id,
+      render: (payment_method) => renderPayment(payment_method),
+    },
+    {
+      title: "Payment Status",
+      dataIndex: "isPaid",
+      key: "isPaid",
+      render: (isPaid) => renderPaymentStatus(isPaid), 
     },
     {
       title: "Actions",
@@ -188,27 +198,35 @@ const OrderManagement = () => {
       align: "center",
       render: (_, record) => (
         <Space>
-        <button onClick={() => handleOpenModal(record)}>View</button>
-        <button onClick={() => handlePrintOrder(record)}>Print Order</button>
-      </Space>
+          <button onClick={() => handleOpenModal(record)}>View</button>
+          <button onClick={() => handlePrintOrder(record)}>Print Order</button>
+        </Space>
       ),
     },
   ];
   const handlePrintOrder = async (order) => {
-    window.open(`http://localhost:3000/print/order/${order.order_id}?print=true`)
-  };
-  
-  const renderStatus = (status) => {
-    const { code, name } = status;
-    const color = statusColors[code];
-    if (status) {
-      return <Tag color={color}>{name}</Tag>;
-    } else {
-      // Default fallback if status code is not recognized
-      return <Tag>Unknown</Tag>;
-    }
+    window.open(
+      `http://localhost:3000/print/order/${order.order_id}?print=true`
+    );
   };
 
+  const renderStatus = (status) => {
+    const { code, name } = status;
+    const color = statusColors[code] || "defaultColor";
+    return <Tag color={color}>{name}</Tag>;
+  };
+  
+  const renderPayment = (payment_method) => {
+    const { id, name } = payment_method;
+    const color = paymentColor[id] || "defaultColor";
+    return <Tag color={color}>{name}</Tag>;
+  };
+  
+  const renderPaymentStatus = (isPaid) => {
+    const color = paymentStatusColor[isPaid] || "defaultColor";
+    return <Tag color={color}>{isPaid ? "Paid" : "Unpaid"}</Tag>;
+  };
+  
   const getAllOrder = async () => {
     try {
       const res = await OrderServicesInstance.getAllOrder();

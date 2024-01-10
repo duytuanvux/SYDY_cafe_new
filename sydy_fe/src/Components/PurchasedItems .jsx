@@ -1,12 +1,35 @@
 import React from "react";
-import { List, Card, Rate, message } from "antd";
+import {
+  Card,
+  message,
+  Table,
+  Typography,
+  Rate,
+  Descriptions,
+  Badge,
+} from "antd";
 import UserServices from "../Services/UserServices";
-
+const { Title } = Typography;
+const statusList = {
+  0: "default", // Cancelled
+  1: "warning", // Pending
+  2: "error", // Processing
+  3: "processing", // Delivering
+  4: "success", // Completed
+  // Add more status codes as needed
+};
 const PurchasedItems = ({ order, reFetch }) => {
   const userServices = new UserServices();
-  function isNull(value) {
-    return value === null;
-  }
+  const renderStatus = (status) => {
+    const { code, name } = status;
+    const color = statusList[code];
+    if (status) {
+      return <Badge status={color} text={name} />;
+    } else {
+      // Default fallback if status code is not recognized
+      return <Badge>Unknown</Badge>;
+    }
+  };
   const handleRatingChange = async (itemId, rating) => {
     try {
       // Check if the order status is 4 (assuming 4 is the status code for a completed order)
@@ -16,7 +39,7 @@ const PurchasedItems = ({ order, reFetch }) => {
         return;
       }
       const feedbackData = {
-        order_id: order.order_id, // Fix: use order.order_id instead of order_id
+        order_id: order.order_id,
         user_id: order.user_id,
         item_id: itemId,
         rating,
@@ -32,61 +55,78 @@ const PurchasedItems = ({ order, reFetch }) => {
     }
   };
 
+  const columns = [
+    { title: "Item Name", dataIndex: "name", key: "name", align: "center" },
+    { title: "Note", dataIndex: "note", key: "note", align: "center" },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+      align: "center",
+    },
+    { title: "Price", dataIndex: "price", key: "price", align: "center" },
+    {
+      title: "SubTotal",
+      dataIndex: "sub_total",
+      key: "sub_total",
+      align: "center",
+    },
+    // Conditionally render the Rating column based on the order status
+    order.status.code === 4
+      ? {
+          title: "Rating",
+          dataIndex: "rating",
+          key: "rating",
+          align: "center",
+          render: (rating, record) => (
+            <Rate
+              value={rating}
+              onChange={(value) => handleRatingChange(record.key, value)}
+            />
+          ),
+        }
+      : null,
+  ].filter(Boolean);
+
+  const data = order.items.map((item) => ({
+    key: item.id,
+    name: item.name,
+    note: item.note,
+    quantity: item.quantity,
+    price: item.price,
+    sub_total: item.sub_total,
+    rating: item.rating,
+  }));
+
   return (
-    <div className="p-4">
-      <Card title={`Order ID: #${order.order_id}`} className="w-full">
-        <p>
-          <strong>Order Date:</strong>{" "}
+    <Card>
+      <Title level={4}>{`Order ID: #${order.order_id}`}</Title>
+
+      {/* Descriptions for Order Details */}
+      <Descriptions title="Order Information">
+        <Descriptions.Item label="Order Date">
           {order.order_date}
-        </p>
-        <p>
-          <strong>Status:</strong> {order.status.name}
-        </p>
-        {order.shipper && (
-          <p>
-            <strong>Shipper:</strong> {order.shipper.name}
-          </p>
-        )}
-        <p>
-          <strong>Total:</strong> ${order.total}
-        </p>
-        <p>
-          <strong>Phone:</strong> {order.phone}
-        </p>
-        <p>
-          <strong>Address:</strong> {order.address}
-        </p>
-        <p>
-          <strong>Items:</strong>
-        </p>
-        <List
-          dataSource={order.items}
-          renderItem={(item) => (
-            <List.Item>
-              <p>
-                <strong>Item ID:</strong> {item.id}
-              </p>
-              <p>
-                <strong>Quantity:</strong> {item.quantity}
-              </p>
-              <p>
-                <strong>Note:</strong> {item.note}
-              </p>
-              {order.status.code === 4 && ( // Conditionally render based on the order status
-                <p>
-                  <strong>Rating:</strong>{" "}
-                  <Rate
-                    value={item.rating}
-                    disabled={!isNull(item.rating)}
-                    onChange={(rating) => handleRatingChange(item.id, rating)}
-                  />
-                </p>
-              )}
-            </List.Item>
-          )}
-        />
-      </Card>
-    </div>
+        </Descriptions.Item>
+        <Descriptions.Item label="Shipper">
+          {order.shipper.name || "Not assgined"}
+        </Descriptions.Item>
+        <Descriptions.Item label="Status">
+          {renderStatus(order.status)}
+        </Descriptions.Item>
+        <Descriptions.Item label="Phone">{order.phone}</Descriptions.Item>
+        <Descriptions.Item label="Address">{order.address}</Descriptions.Item>
+        <Descriptions.Item label="Payment Method">
+          {order.payment_method.name || "Not specified"}
+        </Descriptions.Item>
+      </Descriptions>
+
+      {/* Items Table */}
+      <Title level={5}>Items</Title>
+      <Table dataSource={data} columns={columns} pagination={false} />
+
+      {/* Total Amount */}
+      <p style={{ textAlign: "right" }}>Total Amount: {order.total}</p>
+    </Card>
   );
 };
 

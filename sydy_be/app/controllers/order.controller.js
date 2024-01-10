@@ -2,10 +2,13 @@ const Order = require("../models/order.model");
 const OrderItem = require("../models/orderItem.model");
 
 exports.order = async (req, res) => {
+  const paymentMethodId = req.body.payment_method;
   const orderData = {
     total: req.body.total,
     user_id: req.body.user_id,
     status_code : 1,
+    payment_method_id : paymentMethodId,
+    isPaid: paymentMethodId === 2,
     order_date: new Date(),
     phone: req.body.phone,
     address: req.body.address,

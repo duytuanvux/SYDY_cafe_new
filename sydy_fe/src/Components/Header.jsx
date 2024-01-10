@@ -12,20 +12,20 @@ function Header() {
           </Link>
         </div>
         <ul className="flex flex-row basis-6/12 items-center justify-center gap-8 uppercase text-base-cream">
-          <NavLink to={""}>Trang chủ</NavLink>
+          <NavLink to={""}>Home</NavLink>
           <NavLink hidden to={"foods"}>
             Đồ ăn
           </NavLink>
-          <NavLink to={"drinks"}>Thức uống</NavLink>
-          <NavLink to={"about"}>Giới thiệu</NavLink>
+          <NavLink to={"drinks"}>Drink</NavLink>
+          <NavLink to={"about"}>About us</NavLink>
         </ul>
         {userInfo ? (
           <Profile />
         ) : (
           <div className="flex flex-row basis-3/12 items-center justify-center gap-1 uppercase text-base-cream">
-            <NavLink to={"login"}>Đăng nhập</NavLink>
+            <NavLink to={"login"}>Login</NavLink>
 <p>/</p>
-            <NavLink to={"register"}>Đăng ký</NavLink>
+            <NavLink to={"register"}>Register</NavLink>
           
           </div>
         )}

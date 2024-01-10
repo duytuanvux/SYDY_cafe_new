@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Empty } from "antd";
+import { Empty, Tabs } from "antd";
 import PurchasedItems from "../Components/PurchasedItems ";
 import UserServices from "../Services/UserServices";
+
+const { TabPane } = Tabs;
 
 
 function Order() {
@@ -28,32 +30,43 @@ function Order() {
     fetchPurchasedOrders();
   };
 
-  const renderOrders = (filterCode) =>
-    purchasedOrders
-      .filter((order) => (filterCode ? order.status.code === filterCode : true))
-      .map((order) => (
-        <PurchasedItems
-          key={order.order_id}
-          order={order}
-          reFetch={handleRefetch}
-        />
-      ));
 
   return (
     <div className="p-4">
       <h1 className="text-3xl font-bold mb-4">Purchased Orders</h1>
 
-      {purchasedOrders.length > 0 ? (
-        <>
-          <h2 className="text-xl font-bold mb-2">Processing Orders</h2>
-          {renderOrders(4)}
-
-          <h2 className="text-xl font-bold mb-2">Completed Orders</h2>
-          {renderOrders()}
-        </>
-      ) : (
-        <Empty description="No purchased orders yet" />
-      )}
+      <Tabs defaultActiveKey="1" tabPosition="left">
+        <TabPane tab="Processing Orders" key="1">
+          {purchasedOrders
+            .filter((order) => [1, 2, 3].includes(order.status.code))
+            .map((order) => (
+              <PurchasedItems key={order.order_id} order={order} reFetch={handleRefetch} />
+            ))}
+          {purchasedOrders.filter((order) => [1, 2, 3].includes(order.status.code)).length === 0 && (
+            <Empty description="No processing orders yet" />
+          )}
+        </TabPane>
+        <TabPane tab="Completed Orders" key="2">
+          {purchasedOrders
+            .filter((order) => order.status.code === 4)
+            .map((order) => (
+              <PurchasedItems key={order.order_id} order={order} reFetch={handleRefetch} />
+            ))}
+          {purchasedOrders.filter((order) => order.status.code === 4).length === 0 && (
+            <Empty description="No completed orders yet" />
+          )}
+        </TabPane>
+        <TabPane tab="Canceled Orders" key="3">
+          {purchasedOrders
+            .filter((order) => order.status.code === 0)
+            .map((order) => (
+              <PurchasedItems key={order.order_id} order={order} reFetch={handleRefetch} />
+            ))}
+          {purchasedOrders.filter((order) => order.status.code === 0).length === 0 && (
+            <Empty description="No canceled orders yet" />
+          )}
+        </TabPane>
+      </Tabs>
     </div>
   );
 }

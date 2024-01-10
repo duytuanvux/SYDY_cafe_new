@@ -1,6 +1,6 @@
 import UserServices from "../../Services/UserServices";
 import { useState,useEffect } from "react";
-import { Table } from "antd";
+import { Table, Space, Button } from "antd";
 const UserManagement = () => {
   const UserServicesInstance = new UserServices();
   const [data, setData] = useState([]);
@@ -10,6 +10,22 @@ const UserManagement = () => {
       setData(res);
     } catch (error) {}
   };
+
+  const activateUser = async (user_id) => {
+    try {
+      const res = await UserServicesInstance.activateUser(user_id)
+      console.log(res)
+    } catch (error) {
+      
+    }
+  }
+  const deactivateUser = async (user_id) => {
+    try {
+      const res = await UserServicesInstance.deactivateUser(user_id)
+    } catch (error) {
+      
+    }
+  }
   const columns = [
     {
       title: "User ID",
@@ -46,6 +62,31 @@ const UserManagement = () => {
       dataIndex: "address",
       key: "address",
       align: "center",
+    },
+    {
+      title: "Status",
+      dataIndex: "isActive",
+      key: "isActive",
+      align: "center",
+      render: (isActive) => (isActive ? "Active" : "Inactive"),
+    },
+    {
+      title: "Action",
+      key: "action",
+      align: "center",
+      render: (record) => (
+        <Space size="middle">
+          {record.isActive ? (
+            <Button onClick={() => deactivateUser(record.user_id)} danger>
+              Deactivate
+            </Button>
+          ) : (
+            <Button onClick={() => activateUser(record.user_id)}>
+              Activate
+            </Button>
+          )}
+        </Space>
+      ),
     },
   ];
 

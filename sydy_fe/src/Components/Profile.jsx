@@ -33,15 +33,15 @@ const DropdownComponent = () => {
     <Menu onClick={handleMenuClick}>
       {user.is_admin ? (
         <>
-          <Menu.Item key="management">Quản lý</Menu.Item>
+          <Menu.Item key="management">Management</Menu.Item>
         </>
       ) : (
         <>
-          <Menu.Item key="detailAccount">Thông tin cá nhân</Menu.Item>
-          <Menu.Item key="order">Đơn hàng của bạn</Menu.Item>
+          <Menu.Item key="detailAccount">Profile Infomation</Menu.Item>
+          <Menu.Item key="order">Purchased Orders</Menu.Item>
         </>
       )}
-      <Menu.Item key="logout">Đăng xuất</Menu.Item>
+      <Menu.Item key="logout">Log Out</Menu.Item>
     </Menu>
   );
   return (

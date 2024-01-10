@@ -90,6 +90,11 @@ const Login = () => {
             <Button htmlType="submit">Log in</Button>
           </Form.Item>
         </Form>
+        <div className="flex justify-center">
+          <Link to="/forgot-password" className="text-blue-600 underline">
+            Forgot Password
+          </Link>
+        </div>
         {loading && (
         <div className="loading-spinner">
           <Spin fullscreen />

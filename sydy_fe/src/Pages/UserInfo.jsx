@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, message, Card } from "antd";
+import { Form, Input, Button, message, Card, Tabs } from "antd";
 import UserServices from "../Services/UserServices";
 import { useSelector } from "react-redux";
-
+const { TabPane } = Tabs;
 const UserInfo = ({ userId }) => {
   const userInfo = useSelector((state) => state.auth.user);
   const [form] = Form.useForm();
@@ -39,17 +39,32 @@ const UserInfo = ({ userId }) => {
       message.error(error.response.data.error);
     }
   };
+  const onPasswordChangeFinish = async (data) => {
+    console.log(data)
+    try {
+      const UserServiceInstance = new UserServices();
+      const res = await UserServiceInstance.changePW(
+        userInfo.user_id,
+        data
+      );
 
+      message.success("Password changed successfully!");
+    } catch (error) {
+      message.error(error.response.data.error);
+    }
+  };
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-      <Card title="User Information" bordered={false} style={{ width: "50%" }}>
-      <Form
-        form={form}
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 12 }}
-        onFinish={onFinish}
-      >
-        <Form.Item label="User ID" name="user_id">
+      <Card bordered={false} style={{ width: "50%" }}>
+        <Tabs defaultActiveKey="1" destroyInactiveTabPane>
+          <TabPane tab="User Information" key="1">
+            <Form
+              form={form}
+              labelCol={{ span: 6 }}
+              wrapperCol={{ span: 12 }}
+              onFinish={onFinish}
+            >
+              <Form.Item label="User ID" name="user_id">
           <Input disabled />
         </Form.Item>
 
@@ -101,14 +116,61 @@ const UserInfo = ({ userId }) => {
         >
           <Input />
         </Form.Item>
+              <Form.Item wrapperCol={{ offset: 6, span: 12 }}>
+                <Button htmlType="submit">Update</Button>
+              </Form.Item>
+            </Form>
+          </TabPane>
+          <TabPane tab="Change Password" key="2">
+            <Form
+              form={form}
+              labelCol={{ span: 6 }}
+              wrapperCol={{ span: 12 }}
+              onFinish={onPasswordChangeFinish}
+            >
+              <Form.Item
+                label="Current Password"
+                name="currentPassword"
+                rules={[{ required: true, message: "Please input your current password!" }]}
+              >
+                <Input.Password />
+              </Form.Item>
 
-        <Form.Item wrapperCol={{ offset: 6, span: 12 }}>
-          <Button htmlType="submit">Update</Button>
-        </Form.Item>
-      </Form>
-    </Card>
+              <Form.Item
+                label="New Password"
+                name="newPassword"
+                rules={[{ required: true, message: "Please input your new password!" }]}
+              >
+                <Input.Password />
+              </Form.Item>
+
+              <Form.Item
+                label="Re-enter Password"
+                name="confirmNewPassword"
+                dependencies={["newPassword"]}
+                rules={[
+                  { required: true, message: "Please confirm your new password!" },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("newPassword") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error("The two passwords do not match!"));
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+
+              <Form.Item wrapperCol={{ offset: 6, span: 12 }}>
+                <Button htmlType="submit">Change Password</Button>
+              </Form.Item>
+            </Form>
+          </TabPane>
+        </Tabs>
+      </Card>
     </div>
-    
   );
 };
 
