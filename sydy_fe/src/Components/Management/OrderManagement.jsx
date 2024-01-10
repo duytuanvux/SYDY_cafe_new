@@ -14,11 +14,11 @@ import CommonServices from "../../Services/CommonServices";
 
 const { Option } = Select;
 const statusColors = {
-  0: "gray",    // Cancelled
-  1: "blue",    // Pending
-  2: "orange",  // Processing
-  3: "green",   // Delivering
-  4: "purple",  // Completed
+  0: "gray", // Cancelled
+  1: "blue", // Pending
+  2: "orange", // Processing
+  3: "green", // Delivering
+  4: "purple", // Completed
 };
 
 const paymentColor = {
@@ -27,8 +27,8 @@ const paymentColor = {
 };
 
 const paymentStatusColor = {
-  true: paymentColor[2],  // Paid
-  false: paymentColor[1], // Unpaid
+  1: "green", // Paid
+  0: "red", // Unpaid
 };
 
 const OrderDetails = ({ order, listStatus, listShipper }) => {
@@ -59,15 +59,41 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
   const [selectedShipper, setSelectedShipper] = useState(shipper.shipper_id);
 
   const orderServicesInstance = new OrderServices();
-
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+    {
+      title: "Note",
+      dataIndex: "note",
+      key: "note",
+    },
+    {
+      title: "Rating",
+      dataIndex: "rating",
+      key: "rating",
+      render: (rating) => (rating ? <Rate disabled value={rating} /> : null),
+    },
+  ];
   const updateOrderStatus = async (value) => {
     setSelectedStatus(value);
-    await orderServicesInstance.updateStatusOrder(order_id, { status_code: value });
+    await orderServicesInstance.updateStatusOrder(order_id, {
+      status_code: value,
+    });
   };
 
   const updateOrderShipper = async (value) => {
     setSelectedShipper(value);
-    await orderServicesInstance.updateShipperOrder(order_id, { shipper_id: value });
+    await orderServicesInstance.updateShipperOrder(order_id, {
+      shipper_id: value,
+    });
   };
 
   useEffect(() => {
@@ -100,12 +126,12 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
           </Select>
         </Descriptions.Item>
         <Descriptions.Item label="Payment Method">
-            {payment_method.name}
-          </Descriptions.Item>
-          <Descriptions.Item label="Payment Status">
-            {isPaid ? "Paid" : "Unpaid"}
-          </Descriptions.Item>
-          <Descriptions.Item label="Shipper">
+          {payment_method.name}
+        </Descriptions.Item>
+        <Descriptions.Item label="Payment Status">
+          {isPaid ? "Paid" : "Unpaid"}
+        </Descriptions.Item>
+        <Descriptions.Item label="Shipper">
           <Select
             value={selectedShipper}
             onChange={updateOrderShipper}
@@ -125,9 +151,6 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
         <Descriptions.Item label="User ID">{user_id}</Descriptions.Item>
         <Descriptions.Item label="Phone">{phone}</Descriptions.Item>
         <Descriptions.Item label="Address">{address}</Descriptions.Item>
-        
-        
-          
       </Descriptions>
 
       <Table columns={columns} dataSource={dataSource} pagination={false} />
@@ -138,7 +161,7 @@ const OrderDetails = ({ order, listStatus, listShipper }) => {
 const OrderManagement = () => {
   const OrderServicesInstance = new OrderServices();
   const CommonServicesInstance = new CommonServices();
-  
+
   const [data, setData] = useState([]);
   const [statusList, setStatusList] = useState([]);
   const [shipperList, setShipperList] = useState([]);
@@ -190,7 +213,7 @@ const OrderManagement = () => {
       title: "Payment Status",
       dataIndex: "isPaid",
       key: "isPaid",
-      render: (isPaid) => renderPaymentStatus(isPaid), 
+      render: (isPaid) => renderPaymentStatus(isPaid),
     },
     {
       title: "Actions",
@@ -215,18 +238,18 @@ const OrderManagement = () => {
     const color = statusColors[code] || "defaultColor";
     return <Tag color={color}>{name}</Tag>;
   };
-  
+
   const renderPayment = (payment_method) => {
     const { id, name } = payment_method;
     const color = paymentColor[id] || "defaultColor";
     return <Tag color={color}>{name}</Tag>;
   };
-  
+
   const renderPaymentStatus = (isPaid) => {
     const color = paymentStatusColor[isPaid] || "defaultColor";
     return <Tag color={color}>{isPaid ? "Paid" : "Unpaid"}</Tag>;
   };
-  
+
   const getAllOrder = async () => {
     try {
       const res = await OrderServicesInstance.getAllOrder();

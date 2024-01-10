@@ -20,7 +20,9 @@ const PrivateRoute = ({ children, adminOnly }) => {
   }
 
   // User is not authenticated, redirect to login
-  return <Navigate to="/login" replace state={{ from: window.location.pathname }} />;
+  return (
+    <Navigate to="/login" replace state={{ from: window.location.pathname }} />
+  );
 };
 
 export default PrivateRoute;

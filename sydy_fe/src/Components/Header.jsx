@@ -24,9 +24,8 @@ function Header() {
         ) : (
           <div className="flex flex-row basis-3/12 items-center justify-center gap-1 uppercase text-base-cream">
             <NavLink to={"login"}>Login</NavLink>
-<p>/</p>
+            <p>/</p>
             <NavLink to={"register"}>Register</NavLink>
-          
           </div>
         )}
       </nav>

@@ -22,20 +22,30 @@ function Item({ item }) {
   const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = (values) => {
-  const discountAmount = item.discount?.discount_amount || 0;
-  const priceToAdd = item.price - (item.price * discountAmount) / 100;
-  const subTotal = priceToAdd * quantity;
+    const discountAmount = item.discount?.discount_amount || 0;
+    const priceToAdd = item.price - (item.price * discountAmount) / 100;
+    const subTotal = priceToAdd * quantity;
 
-  dispatch(addToCart({ ...item, ...values, price: priceToAdd, discount: discountAmount, subTotal: subTotal }));
-  setModalOpen(false);
-};
-const renderButtonText = () => {
-  if (item.discount?.discount_amount) {
-    return `Add to cart - ${item.price - (item.price * item.discount?.discount_amount) / 100} VND`;
-  } else {
-    return `Add to cart - ${item.price} VND`;
-  }
-};
+    dispatch(
+      addToCart({
+        ...item,
+        ...values,
+        price: priceToAdd,
+        discount: discountAmount,
+        subTotal: subTotal,
+      })
+    );
+    setModalOpen(false);
+  };
+  const renderButtonText = () => {
+    if (item.discount?.discount_amount) {
+      return `Add to cart - ${
+        item.price - (item.price * item.discount?.discount_amount) / 100
+      } VND`;
+    } else {
+      return `Add to cart - ${item.price} VND`;
+    }
+  };
   return (
     <>
       <Badge.Ribbon
@@ -86,9 +96,10 @@ const renderButtonText = () => {
                   {`${item.price} VND`}
                 </span>
                 <span style={{ color: "red" }}>
-                  
-                  {`${item.price -
-                    (item.price * item.discount?.discount_amount) / 100} VND`}
+                  {`${
+                    item.price -
+                    (item.price * item.discount?.discount_amount) / 100
+                  } VND`}
                 </span>
               </p>
             ) : (
@@ -140,9 +151,10 @@ const renderButtonText = () => {
                           {`${item.price} VND`}
                         </span>
                         <span style={{ color: "red" }}>
-                          
-                          {`${item.price -
-                            (item.price * item.discount?.discount_amount) / 100} VND`}
+                          {`${
+                            item.price -
+                            (item.price * item.discount?.discount_amount) / 100
+                          } VND`}
                         </span>
                       </p>
                     ) : (
@@ -179,9 +191,7 @@ const renderButtonText = () => {
           </Row>
 
           <Form.Item>
-            <button className="button w-full">
-              {renderButtonText()}
-            </button>
+            <button className="button w-full">{renderButtonText()}</button>
           </Form.Item>
         </Form>
       </Modal>

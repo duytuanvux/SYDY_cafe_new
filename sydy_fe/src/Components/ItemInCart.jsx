@@ -45,16 +45,18 @@ function ItemInCart({ item }) {
           <p>Price: {`${item.price} VND`}</p>
           <p>
             Quantity:{" "}
-            <Button size="small"
+            <Button
+              size="small"
               icon={<MinusOutlined />}
               onClick={handleDecreaseQuantity}
-              style={{ marginRight: '8px' }} 
+              style={{ marginRight: "8px" }}
             />
             {item.quantity}
-            <Button size="small"
+            <Button
+              size="small"
               icon={<PlusOutlined />}
               onClick={handleIncreaseQuantity}
-              style={{ marginLeft: '8px' }} 
+              style={{ marginLeft: "8px" }}
             />
           </p>
           <p>Sugar: {item.sugar}</p>

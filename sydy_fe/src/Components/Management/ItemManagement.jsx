@@ -122,8 +122,11 @@ const ItemManagement = () => {
       dataIndex: "category_id",
       key: "category_id",
       align: "center",
-      filters: categories.map(category => ({ text: category.name, value: category.id })),
-    onFilter: (value, record) => record.category_id === value,
+      filters: categories.map((category) => ({
+        text: category.name,
+        value: category.id,
+      })),
+      onFilter: (value, record) => record.category_id === value,
       render: (category_id) => renderCategory(category_id),
     },
     {
@@ -157,7 +160,7 @@ const ItemManagement = () => {
       align: "center",
       render: (item) => (
         <Space>
-          <Button onClick={() => showModal(item)}>Sửa</Button>
+          <Button onClick={() => showModal(item)}>Edit</Button>
         </Space>
       ),
     },

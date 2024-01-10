@@ -1,31 +1,42 @@
 import UserServices from "../../Services/UserServices";
-import { useState,useEffect } from "react";
-import { Table, Space, Button } from "antd";
+import { useState, useEffect } from "react";
+import { Table, Space, Button, message } from "antd";
+
 const UserManagement = () => {
   const UserServicesInstance = new UserServices();
   const [data, setData] = useState([]);
+
   const getAllUser = async () => {
     try {
       const res = await UserServicesInstance.getAllUser();
       setData(res);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
   };
 
   const activateUser = async (user_id) => {
     try {
-      const res = await UserServicesInstance.activateUser(user_id)
-      console.log(res)
+      const res = await UserServicesInstance.activateUser(user_id);
+      message.success(res.message);
+      getAllUser(); // Refresh the user list after activation
     } catch (error) {
-      
+      console.error("Error activating user:", error);
+      message.error("Failed to activate user");
     }
-  }
+  };
+
   const deactivateUser = async (user_id) => {
     try {
-      const res = await UserServicesInstance.deactivateUser(user_id)
+      const res = await UserServicesInstance.deactivateUser(user_id);
+      message.success(res.message);
+      getAllUser(); // Refresh the user list after deactivation
     } catch (error) {
-      
+      console.error("Error deactivating user:", error);
+      message.error("Failed to deactivate user");
     }
-  }
+  };
+
   const columns = [
     {
       title: "User ID",
@@ -93,8 +104,13 @@ const UserManagement = () => {
   useEffect(() => {
     getAllUser();
   }, []);
+
   return (
-    <Table dataSource={data} columns={columns} rowKey={(record) => record.user_id} />
+    <Table
+      dataSource={data}
+      columns={columns}
+      rowKey={(record) => record.user_id}
+    />
   );
 };
 
