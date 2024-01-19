@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Input, Button, Form, Typography, Alert, Spin } from "antd";
 import UserServices from "../Services/UserServices";
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
@@ -14,7 +14,7 @@ const ResetPassword = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate()
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   if (isAuthenticated) {
     return <Navigate to="/404" replace />;

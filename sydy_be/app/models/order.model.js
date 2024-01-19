@@ -168,5 +168,32 @@ function getOrderByOrderId(order_id) {
     });
   });
 }
+function cancelOrder(order_id) {
+  return new Promise((resolve, reject) => {
+    const getStatusSql = "SELECT status_code FROM `order` WHERE order_id = ?";
+    db.query(getStatusSql, [order_id], (statusErr, statusData) => {
+      if (statusErr) {
+        reject(statusErr);
+      } else {
+        const statusCode = statusData[0].status_code;
 
-module.exports = { create, getAllOrders, updateStatus, updateShipper, getOrderByOrderId, orderNeedAction, getAllOrdersByUserId };
+        // Check if the status code is not allowed for cancellation (0, 2, 3, 4)
+        if ([0, 2, 3, 4].includes(statusCode)) {
+          reject("Order status not allowed for cancellation");
+          return;
+        }
+
+        // If status is allowed, proceed with the cancellation
+        const updateStatusSql = "UPDATE `order` SET status_code = 0 WHERE order_id = ?";
+        db.query(updateStatusSql, [order_id], (updateErr, updateData) => {
+          if (updateErr) {
+            reject(updateErr);
+          } else {
+            resolve(updateData);
+          }
+        });
+      }
+    });
+  });
+}
+module.exports = { create, getAllOrders, updateStatus, updateShipper, getOrderByOrderId, orderNeedAction, getAllOrdersByUserId, cancelOrder };

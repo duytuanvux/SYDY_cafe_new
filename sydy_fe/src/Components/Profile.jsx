@@ -37,7 +37,7 @@ const DropdownComponent = () => {
         </>
       ) : (
         <>
-          <Menu.Item key="detailAccount">Profile Infomation</Menu.Item>
+          <Menu.Item key="detailAccount">Profile Information</Menu.Item>
           <Menu.Item key="order">Purchased Orders</Menu.Item>
         </>
       )}

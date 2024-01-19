@@ -116,4 +116,17 @@ exports.getOrderByOrderId = async (req, res) => {
   }
 };
 
-
+exports.cancelOrder = async (req, res) => {
+  const orderId = req.params.orderId;
+  try {
+    await Order.cancelOrder(orderId);
+    res.status(200).json({ message: "Order status canceled successfully" });
+  } catch (err) {
+    console.error("Error updating order status:", err);
+    if (err === "Order status not allowed for cancellation") {
+      res.status(400).json({ error: "Order status not allowed for cancellation" });
+    } else {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+};

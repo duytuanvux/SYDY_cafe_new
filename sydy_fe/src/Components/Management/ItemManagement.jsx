@@ -44,7 +44,6 @@ const ItemManagement = () => {
   async function handleItemAction(actionType, itemId, item) {
     try {
       let res;
-
       switch (actionType) {
         case "remove":
           res = await itemServicesInstance.deleteItem(itemId);

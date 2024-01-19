@@ -1,5 +1,5 @@
 import axios from "axios";
-import { APP_DOMAIN, CREATE_ORDER, GET_ALL_ORDERS, ORDER_NEED_ACTION, UPDATE_SHIPPER_ORDER, UPDATE_STATUS_ORDER } from "../Constants/AppPaths";
+import { APP_DOMAIN, CANCEL_ORDER, CREATE_ORDER, GET_ALL_ORDERS, ORDER_NEED_ACTION, UPDATE_SHIPPER_ORDER, UPDATE_STATUS_ORDER } from "../Constants/AppPaths";
 
 export class OrderServices {
     async createOrder(data) {
@@ -57,7 +57,17 @@ export class OrderServices {
             throw error; // Rethrow the error to propagate it to the caller
         }
     }
-    
+    async cancelOrder(order_id) {
+        try {
+            const url = `${APP_DOMAIN}${CANCEL_ORDER}/${order_id}`;
+            const response = await axios.put(url);
+            return response.data;
+        } catch (error) {
+            // Handle errors
+            console.error("Error fetching items:", error);
+            throw error; // Rethrow the error to propagate it to the caller
+        }
+    }
 }
 
 export default OrderServices;

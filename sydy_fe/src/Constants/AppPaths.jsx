@@ -16,6 +16,7 @@ export const GET_ALL_ORDERS = "/order/get-all-orders";
 export const GET_ALL_USERS = "/user/get-all-users";
 export const GET_STATUS = "/common/get-status";
 export const UPDATE_STATUS_ORDER = "/order/update-status";
+export const CANCEL_ORDER = "/order/cancel-order";
 export const UPDATE_SHIPPER_ORDER = "/order/update-shipper";
 export const ORDER_NEED_ACTION = "/order/order-need-action";
 export const PRINT_ORDER = "/print/order";

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, message, Card, Tabs } from "antd";
+import { Form, Input, Button, message, Card, Tabs, Spin } from "antd";
 import UserServices from "../Services/UserServices";
 import { useSelector } from "react-redux";
 const { TabPane } = Tabs;
@@ -7,11 +7,13 @@ const UserInfo = ({ userId }) => {
   const userInfo = useSelector((state) => state.auth.user);
   const [form] = Form.useForm();
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Fetch user data from the API using the provided userId
     const fetchUserData = async () => {
       try {
+        setLoading(true)
         const UserServiceInstance = new UserServices();
         const userData = await UserServiceInstance.getUserInfo(
           userInfo.user_id
@@ -20,6 +22,8 @@ const UserInfo = ({ userId }) => {
         form.setFieldsValue(userData.data[0]);
       } catch (error) {
         message.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false)
       }
     };
 
@@ -28,6 +32,7 @@ const UserInfo = ({ userId }) => {
 
   const onFinish = async (data) => {
     try {
+      setLoading(true);
       const UserServiceInstance = new UserServices();
       const res = await UserServiceInstance.updateUserInfo(
         userInfo.user_id,
@@ -37,11 +42,13 @@ const UserInfo = ({ userId }) => {
       message.success("User information updated successfully!");
     } catch (error) {
       message.error(error.response.data.error);
+    } finally {
+      setLoading(false);
     }
   };
   const onPasswordChangeFinish = async (data) => {
-    console.log(data)
     try {
+      setLoading(true);
       const UserServiceInstance = new UserServices();
       const res = await UserServiceInstance.changePW(
         userInfo.user_id,
@@ -51,10 +58,13 @@ const UserInfo = ({ userId }) => {
       message.success("Password changed successfully!");
     } catch (error) {
       message.error(error.response.data.error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      {loading && <Spin fullscreen />}
       <Card bordered={false} style={{ width: "50%" }}>
         <Tabs defaultActiveKey="1" destroyInactiveTabPane>
           <TabPane tab="User Information" key="1">
@@ -117,7 +127,7 @@ const UserInfo = ({ userId }) => {
           <Input />
         </Form.Item>
               <Form.Item wrapperCol={{ offset: 6, span: 12 }}>
-                <Button htmlType="submit">Update</Button>
+                <Button htmlType="submit" >Update</Button>
               </Form.Item>
             </Form>
           </TabPane>
@@ -164,7 +174,7 @@ const UserInfo = ({ userId }) => {
               </Form.Item>
 
               <Form.Item wrapperCol={{ offset: 6, span: 12 }}>
-                <Button htmlType="submit">Change Password</Button>
+                <Button htmlType="submit" >Change Password</Button>
               </Form.Item>
             </Form>
           </TabPane>

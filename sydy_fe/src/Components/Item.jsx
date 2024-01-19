@@ -58,7 +58,7 @@ function Item({ item }) {
         text={`${item.discount?.discount_amount}%`}
       >
         <Card
-          style={{ width: 200, height: "auto" }}
+          style={{ width: 200, height: "auto", margin : "10px" }}
           cover={
             <img
               alt={item.name}

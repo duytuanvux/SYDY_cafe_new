@@ -2,10 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
-
+const paypal = require("./paypal-api"); 
+dotenv.config();
 
 // Load environment variables from .env file
-dotenv.config();
 
 // Create an Express application
 const app = express();
@@ -33,6 +33,26 @@ app.use("/order", orderRoutes);
 app.use("/user", userRoutes);
 app.use("/common", commonRoutes);
 app.use("/print", PDFRoutes);
+
+app.post("/my-server/create-paypal-order", async (req, res) => {
+  try {
+    const body = req.body
+    const order = await paypal.createOrder(body);
+    res.json(order);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+app.post("/my-server/capture-paypal-order", async (req, res) => {
+  const { orderID } = req.body;
+  try {
+    const captureData = await paypal.capturePayment(orderID);
+    res.json(captureData);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
 
 // Start the Express server
 app.listen(port, () => {
