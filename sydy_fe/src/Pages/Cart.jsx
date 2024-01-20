@@ -19,7 +19,7 @@ import {
 
 import OrderServices from "../Services/OrderService";
 import UserServices from "../Services/UserServices";
-
+import CommonServices from "../Services/CommonServices";
 import { clearCart } from "../Redux/Reducers/CartReducer";
 
 const { Text } = Typography;
@@ -27,6 +27,7 @@ const { Panel } = Collapse;
 
 const Cart = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  const [paymentMethods, setPaymentMethods] = useState([]);
   const [order, setOrder] = useState();
 
   const cart = useSelector((state) => state.cart).cart;
@@ -41,7 +42,10 @@ const Cart = () => {
 
   const orderServices = new OrderServices();
   const userServiceInstance = new UserServices();
+  const commonServices = new CommonServices();
   const { getUserInfo } = userServiceInstance;
+  const { getPaymentMethod } = commonServices;
+
   const base = "http://localhost:3000";
   const initialOptions = {
     clientId: "test",
@@ -60,7 +64,18 @@ const Cart = () => {
 
     fetchUserData();
   }, [user_id, form, getUserInfo]);
+  useEffect(() => {
+    const fetchPaymentMethods = async () => {
+      try {
+        const response = await getPaymentMethod();
+        setPaymentMethods(response);
+      } catch (error) {
+        message.error("Error fetching payment methods:", error);
+      }
+    };
 
+    fetchPaymentMethods();
+  }, [getPaymentMethod]);
   const handleSubmit = async (values) => {
     const orderData = {
       items: cart,
@@ -73,13 +88,7 @@ const Cart = () => {
 
   const handleSubmitOrder = async () => {
     try {
-      if (!selectedPaymentMethod) {
-        message.error(
-          "Please select a payment method before placing the order."
-        );
-        return;
-      }
-
+      
       const payment_method = selectedPaymentMethod;
       const orderData = { ...order, payment_method };
       await orderServices.createOrder(orderData);
@@ -102,8 +111,7 @@ const Cart = () => {
     );
   }
   const createOrder = async () => {
-    
-    return await fetch(`${base}/my-server/create-paypal-order`, {
+    return await fetch(`${base}/create-paypal-order`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -115,12 +123,11 @@ const Cart = () => {
       }),
     })
       .then((response) => response.json())
-      .then((order) => order.id)
+      .then((order) => order.id);
   };
-  const onApprove = async (data) => {
+  const onApprove = async (data, actions) => {
     try {
-      // Order is captured on the server and the response is returned to the browser
-      const response = await fetch(`${base}/my-server/capture-paypal-order`, {
+      const response = await fetch(`${base}/capture-paypal-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -131,23 +138,19 @@ const Cart = () => {
       });
   
       const result = await response.json();
-  
-      if (result.status === "COMPLETED") {
-        // Set the payment method
-        setSelectedPaymentMethod((prevMethod) => 2 // New value
-        );
-        // Now, call handleSubmitOrder
+      console.log(result)
+      if (result.status == "COMPLETED") {
         await handleSubmitOrder();
-        console.log(selectedPaymentMethod)
+        message.success("Order is paid successfully!");
       } else {
-        message.error("Error capturing PayPal order:", result.error);
+        message.error("Error capturing PayPal order.");
       }
     } catch (error) {
       message.error("Error capturing PayPal order:", error);
     }
   };
   
-  
+
   return (
     <div style={{ maxWidth: 800, margin: "auto", padding: 16 }}>
       <Collapse activeKey={["1", "2", "3"]}>
@@ -225,21 +228,29 @@ const Cart = () => {
               value={selectedPaymentMethod}
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <Radio value={2}>
-                <PayPalScriptProvider options={initialOptions}>
-                  <PayPalButtons
-                    createOrder={(data,actions) => createOrder(data, actions)}
-                    onApprove={(data, actions) => onApprove(data, actions)}
-                  />
-                </PayPalScriptProvider>
-              </Radio>
-              <Radio value={1}>COD</Radio>
+              {paymentMethods.map((method) => (
+                <Radio
+                  key={method.payment_method_id}
+                  value={method.payment_method_id}
+                >
+                  {method.method_name}
+                </Radio>
+              ))}
             </Radio.Group>
           </div>
         </Panel>
       </Collapse>
       <div style={{ marginTop: 16, textAlign: "center" }}>
-        <Button onClick={handleSubmitOrder}>Place Order</Button>
+        {selectedPaymentMethod === 1 ? (
+          <Button onClick={handleSubmitOrder}>Place Order</Button>
+        ) : selectedPaymentMethod === 2 ? (
+          <PayPalScriptProvider options={initialOptions}>
+            <PayPalButtons
+              createOrder={(data, actions) => createOrder(data, actions)}
+              onApprove={(data, actions) => onApprove(data, actions)}
+            />
+          </PayPalScriptProvider>
+        ) : null}
       </div>
     </div>
   );

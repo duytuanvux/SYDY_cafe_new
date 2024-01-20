@@ -213,6 +213,7 @@ const OrderManagement = () => {
       title: "Payment Status",
       dataIndex: "isPaid",
       key: "isPaid",
+      align: "center",
       render: (isPaid) => renderPaymentStatus(isPaid),
     },
     {

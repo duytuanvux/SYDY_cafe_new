@@ -34,7 +34,7 @@ app.use("/user", userRoutes);
 app.use("/common", commonRoutes);
 app.use("/print", PDFRoutes);
 
-app.post("/my-server/create-paypal-order", async (req, res) => {
+app.post("/create-paypal-order", async (req, res) => {
   try {
     const body = req.body
     const order = await paypal.createOrder(body);
@@ -44,7 +44,7 @@ app.post("/my-server/create-paypal-order", async (req, res) => {
   }
 });
 
-app.post("/my-server/capture-paypal-order", async (req, res) => {
+app.post("/capture-paypal-order", async (req, res) => {
   const { orderID } = req.body;
   try {
     const captureData = await paypal.capturePayment(orderID);
