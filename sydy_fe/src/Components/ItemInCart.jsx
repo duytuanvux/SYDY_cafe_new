@@ -42,7 +42,7 @@ function ItemInCart({ item }) {
           <Image src={item.img} alt={item.name} preview={false} />
         </Col>
         <Col span={16}>
-          <p>Price: {`${item.price} VND`}</p>
+          <p>Price: {`$${item.price}`}</p>
           <p>
             Quantity:{" "}
             <Button

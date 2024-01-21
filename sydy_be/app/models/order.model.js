@@ -148,7 +148,7 @@ function orderNeedAction() {
 function getOrderByOrderId(order_id) {
   return new Promise((resolve, reject) => {
     const sql = `
-    SELECT o.*, os.status_name, oi.item_id, i.id AS item_id, i.name, oi.quantity, oi.price, oi.sub_total, oi.note, f.rating, 
+    SELECT o.*, os.status_name, oi.item_id, i.id AS item_id, i.name, oi.quantity, oi.price, oi.sub_total, oi.note, f.rating, p.method_name,
     s.fullname AS shipper_name
     FROM \`order\` o
     LEFT JOIN order_status os ON o.status_code = os.status_code
@@ -156,6 +156,7 @@ function getOrderByOrderId(order_id) {
     LEFT JOIN item i ON oi.item_id = i.id
     LEFT JOIN feedback f ON o.order_id = f.order_id AND oi.item_id = f.item_id
     LEFT JOIN shipper s ON o.shipper_id = s.shipper_id
+    LEFT JOIN payment_method p ON o.payment_method_id = p.payment_method_id
     WHERE o.order_id = ?
   `
     db.query(sql, [order_id], (err, data) => {

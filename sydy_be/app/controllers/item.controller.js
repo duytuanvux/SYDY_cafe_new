@@ -47,7 +47,6 @@ exports.edit_item = async (req, res) => {
     try {
         const itemId = req.params.itemId; 
         const updatedItemData = req.body;
-        
         const result = await Item.edit_item(itemId, updatedItemData);
         
         if (result.success) {
@@ -63,7 +62,6 @@ exports.edit_item = async (req, res) => {
 exports.get_top_items = async (req, res) => {
     try {
         const data = await Item.getTopItems();
-        console.log(data)
         res.json(data);
     } catch (err) {
         // Handle errors gracefully

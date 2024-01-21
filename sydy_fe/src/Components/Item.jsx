@@ -39,11 +39,11 @@ function Item({ item }) {
   };
   const renderButtonText = () => {
     if (item.discount?.discount_amount) {
-      return `Add to cart - ${
+      return `Add to cart - $${
         item.price - (item.price * item.discount?.discount_amount) / 100
-      } VND`;
+      }`;
     } else {
-      return `Add to cart - ${item.price} VND`;
+      return `Add to cart - $${item.price}`;
     }
   };
   return (
@@ -58,7 +58,7 @@ function Item({ item }) {
         text={`${item.discount?.discount_amount}%`}
       >
         <Card
-          style={{ width: 200, height: "auto", margin : "10px" }}
+          style={{ width: 200, height: "auto" }}
           cover={
             <img
               alt={item.name}
@@ -93,17 +93,17 @@ function Item({ item }) {
                     marginRight: 5,
                   }}
                 >
-                  {`${item.price} VND`}
+                  {`$${item.price}`}
                 </span>
                 <span style={{ color: "red" }}>
-                  {`${
+                  {`$${
                     item.price -
                     (item.price * item.discount?.discount_amount) / 100
-                  } VND`}
+                  } `}
                 </span>
               </p>
             ) : (
-              <p style={{ color: "black" }}>{`${item.price} VND`}</p>
+              <p style={{ color: "black" }}>{`$${item.price}`}</p>
             )}
           </div>
         </Card>
@@ -148,17 +148,17 @@ function Item({ item }) {
                             marginRight: 5,
                           }}
                         >
-                          {`${item.price} VND`}
+                          {`$${item.price}`}
                         </span>
                         <span style={{ color: "red" }}>
-                          {`${
+                          {`$${
                             item.price -
                             (item.price * item.discount?.discount_amount) / 100
-                          } VND`}
+                          } `}
                         </span>
                       </p>
                     ) : (
-                      <p style={{ color: "black" }}> {`${item.price} VND`}</p>
+                      <p style={{ color: "black" }}> {`$${item.price}`}</p>
                     )}
                   </div>
 

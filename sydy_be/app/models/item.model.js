@@ -82,98 +82,106 @@ Item.add_item = (newItem) => {
 
 Item.edit_item = (item_id, updatedItemData) => {
     return new Promise((resolve, reject) => {
-      const {
-        name,
-        price,
-        img,
-        description,
-        is_visible,
-        category_id,
-        discount,
-      } = updatedItemData;
-  
-      // Extract discount data
-      const { discount_amount, date } = discount;
-      const startDate = new Date(date[0]).toISOString().slice(0, 19).replace('T', ' ');
-      const endDate = new Date(date[1]).toISOString().slice(0, 19).replace('T', ' ');
-  
-      // Check if a discount record exists for the item
-      db.query(
-        "SELECT * FROM discount WHERE item_id = ?",
-        [item_id],
-        function (selectError, selectResult) {
-          if (selectError) {
-            reject(selectError);
-          } else {
-            if (selectResult.length > 0) {
-              // Discount record exists, update it
-              db.query(
-                "UPDATE discount SET discount_amount = ?, start_date = ?, end_date = ? WHERE item_id = ?",
-                [discount_amount, startDate, endDate, item_id],
-                function (updateError, updateResult) {
-                  if (updateError) {
-                    reject(updateError);
-                  } else {
-                    updateItem();
-                  }
+        const {
+            name,
+            price,
+            img,
+            description,
+            is_visible,
+            category_id,
+            discount,
+        } = updatedItemData;
+
+        // Extract discount data
+        const { discount_amount, date } = discount;
+
+        // Check if discount is an empty object
+        const isDiscountEmpty = Object.keys(discount).length === 0 && discount.constructor === Object;
+
+        // If discount is not empty, proceed with updating or inserting
+        if (!isDiscountEmpty) {
+            const startDate = new Date(date[0]).toISOString().slice(0, 19).replace('T', ' ');
+            const endDate = new Date(date[1]).toISOString().slice(0, 19).replace('T', ' ');
+
+            // Check if a discount record exists for the item
+            db.query(
+                "SELECT * FROM discount WHERE item_id = ?",
+                [item_id],
+                function (selectError, selectResult) {
+                    if (selectError) {
+                        reject(selectError);
+                    } else {
+                        if (selectResult.length > 0) {
+                            // Discount record exists, update it
+                            db.query(
+                                "UPDATE discount SET discount_amount = ?, start_date = ?, end_date = ? WHERE item_id = ?",
+                                [discount_amount, startDate, endDate, item_id],
+                                function (updateError, updateResult) {
+                                    if (updateError) {
+                                        reject(updateError);
+                                    } else {
+                                        updateItem();
+                                    }
+                                }
+                            );
+                        } else {
+                            // Discount record does not exist, insert it
+                            db.query(
+                                "INSERT INTO discount (item_id, discount_amount, start_date, end_date) VALUES (?, ?, ?, ?)",
+                                [item_id, discount_amount, startDate, endDate],
+                                function (insertError, insertResult) {
+                                    if (insertError) {
+                                        reject(insertError);
+                                    } else {
+                                        updateItem();
+                                    }
+                                }
+                            );
+                        }
+                    }
                 }
-              );
-            } else {
-              // Discount record does not exist, insert it
-              db.query(
-                "INSERT INTO discount (item_id, discount_amount, start_date, end_date) VALUES (?, ?, ?, ?)",
-                [item_id, discount_amount, startDate, endDate],
-                function (insertError, insertResult) {
-                  if (insertError) {
-                    reject(insertError);
-                  } else {
-                    updateItem();
-                  }
-                }
-              );
-            }
-          }
+            );
+        } else {
+            // If discount is empty, proceed with updating the item without updating discount
+            updateItem();
         }
-      );
-  
-      // Function to update the item
-      function updateItem() {
-        // Update item table
-        db.query(
-          "UPDATE item SET name = ?, price = ?, img = ?, description = ?, is_visible = ?, category_id = ? WHERE id = ?",
-          [name, price, img, description, is_visible, category_id, item_id],
-          function (error, result) {
-            if (error) {
-              reject(error);
-            } else {
-              if (result.affectedRows > 0) {
-                const editedItem = {
-                  id: item_id,
-                  name,
-                  price,
-                  img,
-                  discount: {
-                    discount_amount,
-                    date,
-                  },
-                };
-                resolve({
-                  success: true,
-                  message: "Item and discount updated successfully",
-                  item: editedItem,
-                });
-              } else {
-                resolve({
-                  success: false,
-                  message: "Item not found",
-                });
-              }
-            }
-          }
-        );
-      }
+
+        // Function to update the item
+        function updateItem() {
+            // Update item table
+            db.query(
+                "UPDATE item SET name = ?, price = ?, img = ?, description = ?, is_visible = ?, category_id = ? WHERE id = ?",
+                [name, price, img, description, is_visible, category_id, item_id],
+                function (error, result) {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        if (result.affectedRows > 0) {
+                            const editedItem = {
+                                id: item_id,
+                                name,
+                                price,
+                                img,
+                                discount: isDiscountEmpty ? {} : { discount_amount, date },
+                            };
+                            resolve({
+                                success: true,
+                                message: "Item and discount updated successfully",
+                                item: editedItem,
+                            });
+                        } else {
+                            resolve({
+                                success: false,
+                                message: "Item not found",
+                            });
+                        }
+                    }
+                }
+            );
+        }
     });
-  };
+};
+
   
 Item.getTopItems = () => {
   return new Promise((resolve, reject) => {

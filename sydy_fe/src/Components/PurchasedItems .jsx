@@ -24,7 +24,6 @@ const statusList = {
 };
 const PurchasedItems = ({ order, reFetch }) => {
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
   const userServices = new UserServices();
   const orderServices = new OrderServices();
 
@@ -60,7 +59,6 @@ const PurchasedItems = ({ order, reFetch }) => {
 
   const handleCancelOrder = async () => {
     try {
-      setLoading(true)
       const data = await orderServices.cancelOrder(order.order_id);
       message.success(data.message);
       setConfirmVisible(false);
@@ -68,7 +66,6 @@ const PurchasedItems = ({ order, reFetch }) => {
     } catch (error) {
       message.error("Error cancelling order:", error);
     } finally {
-      setLoading(false)
     }
   };
 
@@ -106,7 +103,6 @@ const PurchasedItems = ({ order, reFetch }) => {
   }));
   return (
     <>
-    {loading && <Spin fullscreen/>}
       <Card>
         <Typography.Title
           level={4}
@@ -138,7 +134,7 @@ const PurchasedItems = ({ order, reFetch }) => {
         <Typography.Title
           style={{ margin: "10px" }}
           level={4}
-        >{`Total: ${order.total} VND`}</Typography.Title>
+        >{`Total: $${order.total}`}</Typography.Title>
 
         {/* Cancel Order Button */}
         {order.status.code === 1 && (

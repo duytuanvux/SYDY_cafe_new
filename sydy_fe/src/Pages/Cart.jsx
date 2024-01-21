@@ -35,10 +35,10 @@ const Cart = () => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const { user_id } = userInfo;
-  const total = cart.reduce(
-    (sum, item) => sum + (item?.price || 0) * (item?.quantity || 0),
-    0
-  );
+  const total = cart.reduce((sum, item) => {
+    return sum + (item?.price * item?.quantity);
+}, 0).toFixed(2);
+
 
   const orderServices = new OrderServices();
   const userServiceInstance = new UserServices();
@@ -153,7 +153,7 @@ const Cart = () => {
 
   return (
     <div style={{ maxWidth: 800, margin: "auto", padding: 16 }}>
-      <Collapse activeKey={["1", "2", "3"]}>
+      <Collapse defaultActiveKey={['1']} activeKey={["1", "2", "3"]}>
         <Panel header="Items in cart" key="1">
           {cart.map((item) => (
             <Card key={item.id} style={{ marginBottom: 16 }}>
@@ -177,15 +177,15 @@ const Cart = () => {
                   >
                     <Text strong>{item.name}</Text>
                     <Text>{`Sugar: ${item.sugar}, Ice: ${item.ice}`}</Text>
-                    <Text type="danger">{`${item.price} VND`}</Text>
+                    <Text type="danger">{`$${item.price}`}</Text>
                     <Text>Quantity: {item.quantity}</Text>
-                    <Text>SubTotal: {`${item.subTotal} VND`}</Text>
+                    <Text>SubTotal: {`$${item.subTotal}`}</Text>
                   </Space>
                 </Col>
               </Row>
             </Card>
           ))}
-          <div>Total: {total} VND</div>
+          <div>Total: {`$${total}`}</div>
         </Panel>
 
         <Panel header="Delivery Information" key="2">
@@ -245,7 +245,7 @@ const Cart = () => {
           <Button onClick={handleSubmitOrder}>Place Order</Button>
         ) : selectedPaymentMethod === 2 ? (
           <PayPalScriptProvider options={initialOptions}>
-            <PayPalButtons
+            <PayPalButtons style={{ layout : "horizontal"}}
               createOrder={(data, actions) => createOrder(data, actions)}
               onApprove={(data, actions) => onApprove(data, actions)}
             />

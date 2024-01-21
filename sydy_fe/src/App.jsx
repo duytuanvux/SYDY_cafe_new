@@ -21,8 +21,9 @@ function App() {
     return sum + item?.quantity;
   }, 0);
   const total = cart.reduce((sum, item) => {
-    return sum + item?.price * item?.quantity;
-  }, 0);
+    return sum + (item?.price * item?.quantity);
+}, 0).toFixed(2);
+
 
   const [open, setOpen] = useState(false);
 
@@ -93,7 +94,7 @@ function App() {
                 }}
               >
                 <span>Go to cart</span>
-                <span>{`${total}đ`}</span>
+                <span>{`$${total}`}</span>
               </button>
             </div>
           </>
